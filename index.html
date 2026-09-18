@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="color-scheme: dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>NPU Lab · 互动学习舱</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="die-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div>
+          <div class="brand-kicker">RK3576 · IC LAB</div>
+          <div class="brand-title">NPU Lab</div>
+        </div>
+      </div>
+
+      <div class="meter">
+        <div class="meter-head">
+          <span class="micro">MASTERY</span>
+          <span class="meter-val" id="progress-pct">0%</span>
+        </div>
+        <div class="meter-track"><div class="meter-fill" id="progress-fill"></div></div>
+        <div class="meter-sub" id="progress-meta">0 / 11 模块已掌握</div>
+      </div>
+
+      <nav class="nav" id="nav" aria-label="模块导航">
+        <div class="nav-group micro">实验室</div>
+        <button class="nav-item active" data-view="home"><i>00</i><span>总览</span></button>
+        <button class="nav-item" data-view="path"><i>01</i><span>学习路线</span></button>
+        <button class="nav-item" data-view="milestones"><i>✓</i><span>里程碑</span></button>
+        <button class="nav-item" data-view="lectures"><i>文</i><span>讲义全文</span></button>
+        <button class="nav-item" data-view="search"><i>S</i><span>搜索</span></button>
+        <button class="nav-item" data-view="principles"><i>P</i><span>原理剧场</span></button>
+        <button class="nav-item" data-view="bitflow"><i>比特</i><span>位级数据流</span></button>
+        <div class="nav-group micro">交互实验</div>
+        <button class="nav-item" data-view="demo-conv"><i>02</i><span>卷积手算</span></button>
+        <button class="nav-item" data-view="demo-pool"><i>03</i><span>池化演示</span></button>
+        <button class="nav-item" data-view="demo-quant"><i>04</i><span>量化实验室</span></button>
+        <button class="nav-item" data-view="demo-mac"><i>05</i><span>算力与对比</span></button>
+        <button class="nav-item" data-view="demo-npu"><i>06</i><span>NPU 内部</span></button>
+        <button class="nav-item" data-view="demo-attn"><i>07</i><span>注意力机制</span></button>
+        <button class="nav-item" data-view="demo-pipe"><i>08</i><span>部署链路</span></button>
+        <button class="nav-item" data-view="model"><i>M</i><span>YOLO 全流程</span></button>
+        <div class="nav-group micro">板房 · BOARD</div>
+        <button class="nav-item" data-view="cheat"><i>板</i><span>板子小抄</span></button>
+        <div class="nav-group micro">检验</div>
+        <button class="nav-item" data-view="quiz"><i>09</i><span>自测题库</span></button>
+        <button class="nav-item" data-view="cards"><i>10</i><span>闪卡复习</span></button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <button class="ghost-btn" id="reset-progress">重置进度</button>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <!-- 00 HOME -->
+      <section class="view active" id="view-home">
+        <header class="page-head home-head">
+          <div class="eyebrow">NPU SYSTEM LAB · INTERACTIVE</div>
+          <h1>把芯片原理<br /><em>拧成可操作的仪表</em></h1>
+          <p class="lede">
+            面向 IC 验证视角：<b>讲义全文已嵌入</b>，可手算卷积与量化、对 TOPS 账、拆 MAC 阵列、走完 YOLO 部署。
+            进度存在本机。
+          </p>
+          <div class="hero-meta">
+            <span><b>BOARD</b> DshanPi-A1 · RK3576</span>
+            <span><b>NPU</b> 双核 6 TOPS · FP16 / W4A16</span>
+            <span><b>FOCUS</b> 推理 · 不训模型</span>
+          </div>
+        </header>
+
+        <div class="die-map-wrap">
+          <div class="section-rule">
+            <span class="micro">DIE FLOORPLAN · 课程版图</span>
+            <span class="micro dim">点击 IP 块进入实验</span>
+          </div>
+          <svg class="die-map" viewBox="0 0 920 420" role="img" aria-label="课程硅片版图">
+            <defs>
+              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M20 0H0V20" fill="none" stroke="rgba(212,137,90,0.08)" stroke-width="1"/>
+              </pattern>
+              <linearGradient id="copperGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#D4895A" stop-opacity="0.15"/>
+                <stop offset="50%" stop-color="#D4895A" stop-opacity="0.7"/>
+                <stop offset="100%" stop-color="#D4895A" stop-opacity="0.15"/>
+              </linearGradient>
+            </defs>
+            <rect width="920" height="420" rx="4" fill="#0E0D16" stroke="#2C2839"/>
+            <rect width="920" height="420" rx="4" fill="url(#grid)"/>
+
+            <!-- bond pads -->
+            <g class="pads" fill="none" stroke="#2C2839">
+              <rect x="12" y="12" width="18" height="10"/><rect x="40" y="12" width="18" height="10"/>
+              <rect x="68" y="12" width="18" height="10"/><rect x="96" y="12" width="18" height="10"/>
+              <rect x="806" y="12" width="18" height="10"/><rect x="834" y="12" width="18" height="10"/>
+              <rect x="862" y="12" width="18" height="10"/><rect x="890" y="12" width="18" height="10"/>
+              <rect x="12" y="398" width="18" height="10"/><rect x="40" y="398" width="18" height="10"/>
+              <rect x="806" y="398" width="18" height="10"/><rect x="834" y="398" width="18" height="10"/>
+            </g>
+
+            <!-- interconnect traces -->
+            <g fill="none" stroke="url(#copperGrad)" stroke-width="1.5">
+              <path d="M150 120 H280 V90 H380"/>
+              <path d="M150 220 H300 V280 H420"/>
+              <path d="M150 320 H260 V340 H400"/>
+              <path d="M520 140 H620 V180 H700"/>
+              <path d="M520 250 H640 V300 H720"/>
+              <path d="M480 200 H560 V120 H680"/>
+            </g>
+
+            <!-- IP blocks -->
+            <g class="die-ip" data-go="lectures" tabindex="0">
+              <rect x="48" y="70" width="100" height="70" rx="3" class="ip-rect accent"/>
+              <text x="98" y="100" class="ip-num">文</text>
+              <text x="98" y="124" class="ip-name">讲义全文</text>
+            </g>
+            <g class="die-ip" data-go="path" tabindex="0">
+              <rect x="48" y="152" width="100" height="70" rx="3" class="ip-rect"/>
+              <text x="98" y="182" class="ip-num">01</text>
+              <text x="98" y="206" class="ip-name">学习路线</text>
+            </g>
+            <g class="die-ip" data-go="principles" tabindex="0">
+              <rect x="48" y="234" width="100" height="70" rx="3" class="ip-rect accent"/>
+              <text x="98" y="264" class="ip-num">P</text>
+              <text x="98" y="288" class="ip-name">原理剧场</text>
+            </g>
+            <g class="die-ip" data-go="demo-conv" tabindex="0">
+              <rect x="48" y="316" width="100" height="62" rx="3" class="ip-rect"/>
+              <text x="98" y="352" class="ip-num">02 · 卷积</text>
+            </g>
+
+            <g class="die-ip wide" data-go="demo-quant" tabindex="0">
+              <rect x="200" y="70" width="140" height="100" rx="3" class="ip-rect accent"/>
+              <text x="270" y="112" class="ip-num">04</text>
+              <text x="270" y="138" class="ip-name">量化实验室</text>
+              <text x="270" y="158" class="ip-sub">INT8 · SCALE</text>
+            </g>
+            <g class="die-ip wide" data-go="demo-mac" tabindex="0">
+              <rect x="200" y="190" width="140" height="100" rx="3" class="ip-rect"/>
+              <text x="270" y="232" class="ip-num">05</text>
+              <text x="270" y="258" class="ip-name">算力账</text>
+              <text x="270" y="278" class="ip-sub">CPU vs NPU</text>
+            </g>
+            <g class="die-ip wide" data-go="demo-pipe" tabindex="0">
+              <rect x="200" y="308" width="140" height="70" rx="3" class="ip-rect"/>
+              <text x="270" y="338" class="ip-num">08</text>
+              <text x="270" y="360" class="ip-name">部署链路</text>
+            </g>
+
+            <!-- core MAC array signature -->
+            <g class="die-ip core" data-go="demo-npu" tabindex="0">
+              <rect x="380" y="120" width="140" height="180" rx="3" class="ip-rect core-rect"/>
+              <!-- 8x8 mac grid -->
+              <g class="mac-grid">
+                <rect x="398" y="148" width="12" height="12"/><rect x="414" y="148" width="12" height="12"/>
+                <rect x="430" y="148" width="12" height="12"/><rect x="446" y="148" width="12" height="12"/>
+                <rect x="462" y="148" width="12" height="12"/><rect x="478" y="148" width="12" height="12"/>
+                <rect x="494" y="148" width="12" height="12"/>
+                <rect x="398" y="164" width="12" height="12"/><rect x="414" y="164" width="12" height="12"/>
+                <rect x="430" y="164" width="12" height="12"/><rect x="446" y="164" width="12" height="12"/>
+                <rect x="462" y="164" width="12" height="12"/><rect x="478" y="164" width="12" height="12"/>
+                <rect x="494" y="164" width="12" height="12"/>
+                <rect x="398" y="180" width="12" height="12"/><rect x="414" y="180" width="12" height="12"/>
+                <rect x="430" y="180" width="12" height="12"/><rect x="446" y="180" width="12" height="12"/>
+                <rect x="462" y="180" width="12" height="12"/><rect x="478" y="180" width="12" height="12"/>
+                <rect x="494" y="180" width="12" height="12"/>
+                <rect x="398" y="196" width="12" height="12"/><rect x="414" y="196" width="12" height="12"/>
+                <rect x="430" y="196" width="12" height="12"/><rect x="446" y="196" width="12" height="12"/>
+                <rect x="462" y="196" width="12" height="12"/><rect x="478" y="196" width="12" height="12"/>
+                <rect x="494" y="196" width="12" height="12"/>
+                <rect x="398" y="212" width="12" height="12"/><rect x="414" y="212" width="12" height="12"/>
+                <rect x="430" y="212" width="12" height="12"/><rect x="446" y="212" width="12" height="12"/>
+                <rect x="462" y="212" width="12" height="12"/><rect x="478" y="212" width="12" height="12"/>
+                <rect x="494" y="212" width="12" height="12"/>
+                <rect x="398" y="228" width="12" height="12"/><rect x="414" y="228" width="12" height="12"/>
+                <rect x="430" y="228" width="12" height="12"/><rect x="446" y="228" width="12" height="12"/>
+                <rect x="462" y="228" width="12" height="12"/><rect x="478" y="228" width="12" height="12"/>
+                <rect x="494" y="228" width="12" height="12"/>
+              </g>
+              <text x="450" y="258" class="ip-num">06</text>
+              <text x="450" y="278" class="ip-name">NPU 核心</text>
+            </g>
+
+            <g class="die-ip" data-go="demo-attn" tabindex="0">
+              <rect x="560" y="70" width="120" height="90" rx="3" class="ip-rect"/>
+              <text x="620" y="108" class="ip-num">07</text>
+              <text x="620" y="132" class="ip-name">注意力</text>
+              <text x="620" y="150" class="ip-sub">Q·K·V</text>
+            </g>
+            <g class="die-ip" data-go="quiz" tabindex="0">
+              <rect x="720" y="140" width="150" height="70" rx="3" class="ip-rect"/>
+              <text x="795" y="170" class="ip-num">09</text>
+              <text x="795" y="194" class="ip-name">自测题库</text>
+            </g>
+            <g class="die-ip" data-go="model" tabindex="0">
+              <rect x="720" y="222" width="150" height="70" rx="3" class="ip-rect accent"/>
+              <text x="795" y="252" class="ip-num">M</text>
+              <text x="795" y="276" class="ip-name">YOLO 全流程</text>
+            </g>
+            <g class="die-ip" data-go="cards" tabindex="0">
+              <rect x="720" y="304" width="150" height="70" rx="3" class="ip-rect"/>
+              <text x="795" y="334" class="ip-num">10</text>
+              <text x="795" y="358" class="ip-name">闪卡复习</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="thesis">
+          <div class="thesis-label micro">CORE THESIS</div>
+          <p>神经网络推理 <span class="eq">=</span> 矩阵乘法 <span class="eq">+</span> 非线性映射。NPU 只做推理；设计全部艺术 <span class="eq">=</span> 让上千个乘法器每拍都有数据可吃。</p>
+        </div>
+
+        <div class="spec-strip">
+          <div class="spec"><span class="micro">LECTURES</span><strong>27</strong></div>
+          <div class="spec"><span class="micro">MODULES</span><strong>14</strong></div>
+          <div class="spec"><span class="micro">QUIZ</span><strong>31</strong></div>
+          <div class="spec"><span class="micro">STORAGE</span><strong>LOCAL</strong></div>
+        </div>
+
+        <div class="mark-row">
+          <button class="primary-btn" data-go="lectures">打开讲义全文</button>
+          <button class="secondary-btn" data-go="path">学习路线</button>
+          <button class="secondary-btn mark-btn" data-module="home">标记本页已读</button>
+        </div>
+      </section>
+
+      <!-- 01 PATH -->
+      <section class="view" id="view-path">
+        <header class="page-head">
+          <div class="eyebrow">01 · CURRICULUM</div>
+          <h1>学习路线</h1>
+          <p class="lede">主线五阶段 + Linux/SoC 并行补课 + LLM 进阶。里程碑可对照讲义勾选。</p>
+        </header>
+        <div class="path-list" id="path-list"></div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="path">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- LECTURES READER -->
+      <section class="view" id="view-lectures">
+        <header class="page-head">
+          <div class="eyebrow">L · FULL LECTURES</div>
+          <h1>讲义全文</h1>
+          <p class="lede">仓库讲义正文 + 页内 SVG 结构图（md 难画的部分已网页化）。读完一篇点「已读」。</p>
+        </header>
+
+        <div class="lect-layout">
+          <aside class="lect-index" id="lect-index" aria-label="讲义目录"></aside>
+          <article class="lect-main">
+            <div class="lect-toolbar">
+              <div>
+                <div class="micro" id="lect-stage">—</div>
+                <h2 id="lect-title">选择左侧讲义</h2>
+                <div class="lect-file micro" id="lect-file"></div>
+              </div>
+              <div class="controls" style="margin:0">
+                <button class="secondary-btn" id="lect-prev">← 上一篇</button>
+                <button class="secondary-btn" id="lect-next">下一篇 →</button>
+                <button class="primary-btn" id="lect-mark">标记已读</button>
+              </div>
+            </div>
+            <div class="lect-demos" id="lect-demos"></div>
+            <div class="lect-body md-body" id="lect-body">
+              <p class="hint">从左侧或上方目录选择一篇讲义开始阅读。</p>
+            </div>
+            <div class="lect-foot controls">
+              <button class="secondary-btn" id="lect-prev-b">← 上一篇</button>
+              <button class="secondary-btn" id="lect-next-b">下一篇 →</button>
+            </div>
+          </article>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="lectures">标记讲义模块掌握</button>
+        </div>
+      </section>
+
+      <!-- PRINCIPLES THEATER -->
+      <section class="view" id="view-principles">
+        <header class="page-head">
+          <div class="eyebrow">P · PRINCIPLE THEATER</div>
+          <h1>原理剧场</h1>
+          <p class="lede">刨根问底用：每个原理一块可拖动画。先建立几何/数据直觉，再回讲义对公式。</p>
+        </header>
+
+        <!-- 1 dot product -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P1 · 点积 = 默契度</span>
+            <span class="step-badge">拖动角度</span>
+          </div>
+          <div class="princ-body">
+            <canvas id="cv-dot" width="420" height="280" aria-label="点积几何"></canvas>
+            <div class="princ-side">
+              <p class="princ-desc">点积 <code>a·b = |a||b|cosθ</code>。方向一致最大，垂直为 0，反向为负。MAC 在硬件上算的就是它。</p>
+              <label class="inline-slider">夹角 θ <span id="v-dot-theta">45°</span>
+                <input type="range" id="s-dot-theta" min="0" max="180" step="1" value="45" />
+              </label>
+              <div class="param-stack" style="margin-top:12px">
+                <div class="param wide-param"><span class="micro">A·B</span><strong id="m-dot-val">—</strong></div>
+                <div class="param wide-param"><span class="micro">COS θ</span><strong id="m-dot-cos">—</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 linear collapse -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P2 · 多层线性为何塌缩</span>
+            <div class="seg" role="group">
+              <button class="seg-btn active" id="lin-mode-linear">仅线性</button>
+              <button class="seg-btn" id="lin-mode-relu">线性 + ReLU</button>
+            </div>
+          </div>
+          <div class="princ-body">
+            <canvas id="cv-linear" width="420" height="280" aria-label="线性塌缩"></canvas>
+            <div class="princ-side">
+              <p class="princ-desc">两层无激活：<code>y = b(ax)</code> 仍是一条直线。加上 ReLU，中间被「掰弯」，多层铰链才能逼近复杂形状。</p>
+              <label class="inline-slider">第一层斜率 a <span id="v-lin-a">1.2</span>
+                <input type="range" id="s-lin-a" min="-30" max="30" step="1" value="12" />
+              </label>
+              <label class="inline-slider" style="margin-top:10px">第二层斜率 b <span id="v-lin-b">0.8</span>
+                <input type="range" id="s-lin-b" min="-30" max="30" step="1" value="8" />
+              </label>
+              <div class="readout" id="lin-readout" style="margin-top:12px">y = 0.96 x  ← 仍是一条直线</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 im2col -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P3 · im2col：卷积如何变矩阵乘</span>
+            <span class="step-badge" id="im2col-step">窗口 1 / 4</span>
+          </div>
+          <div class="princ-body">
+            <div class="im2col-stage">
+              <div>
+                <div class="micro">输入图像 3×3</div>
+                <div class="matrix input-matrix" id="im2col-img"></div>
+              </div>
+              <div class="op">→ 摊平 →</div>
+              <div>
+                <div class="micro">im2col 矩阵 · 每行一个窗口</div>
+                <div class="im2col-table" id="im2col-table"></div>
+              </div>
+              <div class="op">× W →</div>
+              <div>
+                <div class="micro">输出</div>
+                <div class="matrix output-matrix" id="im2col-out"></div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="primary-btn" id="im2col-play">▶ 演示</button>
+              <button class="secondary-btn" id="im2col-next">下一窗 →</button>
+            </div>
+            <p class="hint">每个滑动窗口被复制成矩阵的一行，卷积就变成标准 GEMM——MAC 阵列最爱吃这种形状。代价是数据重排（DMA 的日常工作）。</p>
+          </div>
+        </div>
+
+        <!-- 4 softmax -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P4 · Softmax：分数 → 概率权重</span>
+          </div>
+          <div class="princ-body">
+            <canvas id="cv-softmax" width="420" height="240" aria-label="softmax"></canvas>
+            <div class="princ-side">
+              <p class="princ-desc">原始相关度可以是任意大数；softmax 做两件事：拉开差距 + 归一化到和为 1。温度 T 越大越均匀，越小越「赢家通吃」。</p>
+              <label class="inline-slider">分数「爱」 <span id="v-sm-s1">2</span>
+                <input type="range" id="s-sm-s1" min="-4" max="6" step="0.5" value="2" />
+              </label>
+              <label class="inline-slider" style="margin-top:8px">温度 T <span id="v-sm-t">1.0</span>
+                <input type="range" id="s-sm-t" min="20" max="300" step="5" value="100" />
+              </label>
+              <div class="readout" id="sm-readout" style="margin-top:12px">w = [0.21, 0.58, 0.21]</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 quant bins -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P5 · 量化：连续值落入 INT8 格子</span>
+          </div>
+          <div class="princ-body">
+            <canvas id="cv-qbins" width="420" height="220" aria-label="量化数轴"></canvas>
+            <div class="princ-side">
+              <p class="princ-desc">浮点是连续的，INT8 只有 256 个格子。s 把 [-max,max] 切成等宽格；round 最多偏半格。离群点会把 s 拉大，其余点全变粗。</p>
+              <label class="inline-slider">权重 w <span id="v-qb-w">0.62</span>
+                <input type="range" id="s-qb-w" min="-128" max="128" step="1" value="62" />
+              </label>
+              <label class="inline-slider" style="margin-top:8px">离群 max <span id="v-qb-max">1.28</span>
+                <input type="range" id="s-qb-max" min="40" max="300" step="2" value="128" />
+              </label>
+              <div class="param-stack" style="margin-top:12px">
+                <div class="param wide-param"><span class="micro">s</span><strong id="m-qb-s">—</strong></div>
+                <div class="param wide-param"><span class="micro">q / 反量化</span><strong id="m-qb-q">—</strong></div>
+                <div class="param wide-param"><span class="micro">误差</span><strong id="m-qb-e">—</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 bandwidth wall -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P6 · 运算强度：算力墙还是带宽墙</span>
+          </div>
+          <div class="princ-body">
+            <div class="race" id="race-view">
+              <div class="race-row">
+                <span class="micro">计算时间</span>
+                <div class="bar-track"><div class="bar-fill npu" id="race-comp"></div></div>
+                <span class="bar-val" id="race-comp-t">—</span>
+              </div>
+              <div class="race-row">
+                <span class="micro">搬运时间</span>
+                <div class="bar-track"><div class="bar-fill cpu" id="race-move"></div></div>
+                <span class="bar-val" id="race-move-t">—</span>
+              </div>
+              <div class="race-verdict" id="race-verdict">瓶颈：—</div>
+            </div>
+            <div class="princ-side">
+              <p class="princ-desc">运算强度 = ops / byte。强度低（depthwise、逐元素）时 DDR 成墙；强度高时 MAC 才是墙。NPU 编译器的 tiling/融合就是在抬有效强度。</p>
+              <label class="inline-slider">运算强度 ops/B <span id="v-race-ai">50</span>
+                <input type="range" id="s-race-ai" min="1" max="200" step="1" value="50" />
+              </label>
+              <label class="inline-slider" style="margin-top:8px">数据量 MB <span id="v-race-bytes">3.4</span>
+                <input type="range" id="s-race-bytes" min="1" max="50" step="1" value="3" />
+              </label>
+              <p class="hint">参考：NPU 2 TOPS，DDR 34 GB/s。普通卷积 ~50 ops/B 偏计算；depthwise ~几 ops/B 纯搬运。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7 BN fold -->
+        <div class="panel princ-panel">
+          <div class="panel-head">
+            <span class="panel-title">P7 · BN 推理折叠：硬件为何没有 BN 单元</span>
+          </div>
+          <div class="princ-body">
+            <div class="bn-flow" id="bn-flow">
+              <div class="bn-step" data-bn="0">
+                <div class="micro">训练图</div>
+                <div class="bn-chain">Conv → BN → ReLU</div>
+              </div>
+              <div class="bn-arrow">⇒</div>
+              <div class="bn-step" data-bn="1">
+                <div class="micro">折叠代数</div>
+                <div class="bn-chain">y = γ·(Wx−μ)/σ + β<br/><span class="dim">= (γ/σ)·W · x + (β−γμ/σ)</span></div>
+              </div>
+              <div class="bn-arrow">⇒</div>
+              <div class="bn-step" data-bn="2">
+                <div class="micro">推理图</div>
+                <div class="bn-chain accent">Conv′ → ReLU</div>
+              </div>
+            </div>
+            <p class="hint">推理时 γ/σ、β−γμ/σ 是常数，可并入卷积的权重与偏置。硬件只需 MAC + ReLU，没有独立 BN 电路。</p>
+          </div>
+        </div>
+
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="principles">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- BITFLOW -->
+      <section class="view" id="view-bitflow">
+        <header class="page-head">
+          <div class="eyebrow">B · BIT-LEVEL DATA PATH</div>
+          <h1>位级数据流</h1>
+          <p class="lede">盯住每一个 bit：INT8 怎么从 DDR 走到 MAC，乘完进 INT32，再缩回 INT8。可逐步播放。</p>
+        </header>
+
+        <div class="bit-controls panel">
+          <div class="panel-head">
+            <span class="panel-title">激励</span>
+            <span class="step-badge" id="bf-stage-label">阶段 0 / 5</span>
+          </div>
+          <div class="bf-inputs">
+            <label>x (INT8)
+              <input type="number" id="bf-x" min="-128" max="127" value="12" />
+            </label>
+            <label>w (INT8)
+              <input type="number" id="bf-w" min="-128" max="127" value="5" />
+            </label>
+            <label>acc 初值
+              <input type="number" id="bf-acc0" value="0" />
+            </label>
+            <label>s (float)
+              <input type="number" id="bf-s" step="0.001" value="0.01" />
+            </label>
+          </div>
+          <div class="controls">
+            <button class="primary-btn" id="bf-play">▶ 播放</button>
+            <button class="secondary-btn" id="bf-step">单步 →</button>
+            <button class="secondary-btn" id="bf-reset">重置</button>
+          </div>
+        </div>
+
+        <div class="panel bit-stage-wrap">
+          <div class="bit-path" id="bit-path">
+            <div class="bp-node" data-st="0">
+              <div class="micro">DDR</div>
+              <div class="bp-bits" id="bp-ddr"></div>
+              <div class="bp-val" id="bp-ddr-v">x=12</div>
+            </div>
+            <div class="bp-wire" data-st="0"><div class="bp-pulse"></div></div>
+            <div class="bp-node" data-st="1">
+              <div class="micro">片上缓冲</div>
+              <div class="bp-bits" id="bp-buf"></div>
+              <div class="bp-val" id="bp-buf-v">驻留</div>
+            </div>
+            <div class="bp-wire" data-st="1"><div class="bp-pulse"></div></div>
+            <div class="bp-node mac" data-st="2">
+              <div class="micro">MAC 阵列</div>
+              <div class="bp-bits dual" id="bp-mac-x"></div>
+              <div class="bp-times">×</div>
+              <div class="bp-bits dual" id="bp-mac-w"></div>
+              <div class="bp-val" id="bp-mac-v">12×5</div>
+            </div>
+            <div class="bp-wire" data-st="2"><div class="bp-pulse"></div></div>
+            <div class="bp-node" data-st="3">
+              <div class="micro">INT32 累加</div>
+              <div class="bp-acc" id="bp-acc">0</div>
+              <div class="bp-val" id="bp-acc-v">Σ</div>
+            </div>
+            <div class="bp-wire" data-st="3"><div class="bp-pulse"></div></div>
+            <div class="bp-node" data-st="4">
+              <div class="micro">×s + 舍入</div>
+              <div class="bp-scale" id="bp-scale">—</div>
+              <div class="bp-val" id="bp-scale-v">反量化</div>
+            </div>
+            <div class="bp-wire" data-st="4"><div class="bp-pulse"></div></div>
+            <div class="bp-node" data-st="5">
+              <div class="micro">输出 INT8</div>
+              <div class="bp-bits" id="bp-out"></div>
+              <div class="bp-val" id="bp-out-v">—</div>
+            </div>
+          </div>
+          <div class="readout" id="bf-readout">点「播放」看 bit 怎么走。</div>
+        </div>
+
+        <div class="lab-grid" style="margin-top:14px">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">位视图 · x</span></div>
+            <div class="bit-grid" id="bit-grid-x"></div>
+            <p class="hint" id="bit-grid-x-note"></p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">位视图 · w</span></div>
+            <div class="bit-grid" id="bit-grid-w"></div>
+            <p class="hint" id="bit-grid-w-note"></p>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px">
+          <div class="panel-head"><span class="panel-title">为什么 IC 要盯 bit</span></div>
+          <ul class="bullets">
+            <li><b>位宽决定乘法器面积</b>：8×8 与 24×24 尾数不是一个量级——02 课「计算便宜」的电路版。</li>
+            <li><b>符号与饱和</b>：INT8 −128 的绝对值比 +127 大 1；round 后溢出是截断还是饱和，软件/硬件必须一致。</li>
+            <li><b>累加链</b>：一拍 1024 个 INT8 乘积进 INT32，中途哪一级进位错都会让整层悄悄偏。</li>
+            <li><b>布局</b>：NC1HWC2 把 16 个通道打包，正好铺一排——bit 在总线上「排成什么样」就是编译器的排布方案。</li>
+          </ul>
+        </div>
+
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="bitflow">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 02 CONV -->
+      <section class="view" id="view-demo-conv">
+        <header class="page-head">
+          <div class="eyebrow">02 · CONVOLUTION</div>
+          <h1>卷积手算</h1>
+          <p class="lede">3×3 输入，2×2 核，步长 1。核在图上滑动，每个位置做一次点积。</p>
+        </header>
+
+        <div class="lab-grid">
+          <div class="panel wide">
+            <div class="panel-head">
+              <span class="panel-title">滑窗点积</span>
+              <span class="step-badge" id="conv-step-label">窗口 1 / 4</span>
+            </div>
+            <div class="conv-stage">
+              <div>
+                <div class="micro">INPUT 3×3</div>
+                <div class="matrix input-matrix" id="conv-input"></div>
+              </div>
+              <div class="op">×</div>
+              <div>
+                <div class="micro">KERNEL 2×2</div>
+                <div class="matrix kernel-matrix" id="conv-kernel"></div>
+              </div>
+              <div class="op">→</div>
+              <div>
+                <div class="micro">OUTPUT 2×2</div>
+                <div class="matrix output-matrix" id="conv-output"></div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="secondary-btn" id="conv-prev">← 窗口</button>
+              <button class="primary-btn" id="conv-play">▶ 播放</button>
+              <button class="secondary-btn" id="conv-next">窗口 →</button>
+            </div>
+            <div class="readout" id="conv-formula">1×1 + 2×2 + 4×3 + 5×4 = 37</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">要点</span></div>
+            <ul class="bullets">
+              <li><b>核 = 特征探测器</b>——训练学出来，不是人手设计。</li>
+              <li><b>权重共享</b>——同一核全图复用，参数不随图涨。</li>
+              <li><b>输出尺寸</b> = (原图−核)/步长+1 → 本例 2。</li>
+              <li><b>im2col</b>——滑窗摊平成 GEMM，喂 MAC 阵列。</li>
+            </ul>
+            <div class="ic-note">
+              <div class="micro">IC VERIFICATION</div>
+              <p>滑窗地址、边界填充、stride 错位——纯随机激不出真实图像地址模式。</p>
+            </div>
+          </div>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-conv">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 03 POOL -->
+      <section class="view" id="view-demo-pool">
+        <header class="page-head">
+          <div class="eyebrow">03 · POOLING</div>
+          <h1>池化 · 无权重压缩</h1>
+          <p class="lede">4×4 特征图，2×2 窗口，步长 2。切换 Max / Average。</p>
+        </header>
+
+        <div class="lab-grid">
+          <div class="panel wide">
+            <div class="panel-head">
+              <span class="panel-title">窗口取值</span>
+              <div class="seg" role="group">
+                <button class="seg-btn active pool-mode" data-mode="max">Max</button>
+                <button class="seg-btn pool-mode" data-mode="avg">Average</button>
+              </div>
+            </div>
+            <div class="conv-stage">
+              <div>
+                <div class="micro">INPUT 4×4</div>
+                <div class="matrix pool-input" id="pool-input"></div>
+              </div>
+              <div class="op">→</div>
+              <div>
+                <div class="micro">OUTPUT 2×2</div>
+                <div class="matrix pool-output" id="pool-output"></div>
+              </div>
+            </div>
+            <div class="readout" id="pool-formula">窗口1 → [1 3 / 5 6] → max = 6</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">卷积 vs 池化</span></div>
+            <div class="compare">
+              <div class="compare-row head"><span></span><span>卷积</span><span>池化</span></div>
+              <div class="compare-row"><span>权重</span><span>训练学出</span><span class="hi">无</span></div>
+              <div class="compare-row"><span>作用</span><span>提特征</span><span>下采样</span></div>
+              <div class="compare-row"><span>硬件</span><span>MAC 阵列</span><span>组合逻辑</span></div>
+            </div>
+            <ul class="bullets" style="margin-top:14px">
+              <li>Max 保留最显著响应；Average 更平滑。</li>
+              <li>作用：降维、平移不变、防过拟合。</li>
+              <li>BN 推理时折叠进卷积，硬件无独立 BN 单元。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-pool">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 04 QUANT -->
+      <section class="view" id="view-demo-quant">
+        <header class="page-head">
+          <div class="eyebrow">04 · QUANTIZATION</div>
+          <h1>量化实验室</h1>
+          <p class="lede">对称量化：s = max|w|/127，q = round(w/s)，误差 ≤ s/2。</p>
+        </header>
+
+        <div class="lab-grid">
+          <div class="panel wide">
+            <div class="panel-head"><span class="panel-title">INT8 映射</span></div>
+            <div class="quant-inputs">
+              <label>w₁ <input type="number" step="0.01" id="qw0" value="0.62" /></label>
+              <label>w₂ <input type="number" step="0.01" id="qw1" value="-1.28" /></label>
+              <label>w₃ <input type="number" step="0.01" id="qw2" value="0.45" /></label>
+              <label>w₄ <input type="number" step="0.01" id="qw3" value="-0.09" /></label>
+            </div>
+            <div class="param-row">
+              <div class="param"><span class="micro">MAX|W|</span><strong id="q-max">1.28</strong></div>
+              <div class="param"><span class="micro">SCALE s</span><strong id="q-s">0.01008</strong></div>
+              <div class="param"><span class="micro">ERR BOUND s/2</span><strong id="q-half">0.00504</strong></div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="quant-table">
+                <thead>
+                  <tr><th>浮点 w</th><th>w/s</th><th>q INT8</th><th>q×s</th><th>误差</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="hint">改数字：离群点拉大 max → s 变大 → 其余点误差变差。这就是校准代表性问题。</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">降精度的三笔账</span></div>
+            <div class="ledger">
+              <div class="ledger-row"><span class="micro">COMPUTE</span><p>乘法器面积/功耗随位宽² 涨，8×8 远小于 FP32 尾数乘法。</p></div>
+              <div class="ledger-row"><span class="micro">MOVE</span><p>INT8 数据量 = FP32 的 1/4。NPU 瓶颈一半在搬运。</p></div>
+              <div class="ledger-row"><span class="micro">STORE</span><p>权重体积直接缩 4 倍（.rknn 常见做法）。</p></div>
+            </div>
+            <div class="ladder">
+              <div class="micro">RESCUE LADDER</div>
+              <ol>
+                <li>换更有代表性的校准数据</li>
+                <li><code>accuracy_analysis</code> 定位层</li>
+                <li>混合量化（敏感层 FP16）</li>
+                <li>量化感知训练 QAT</li>
+              </ol>
+            </div>
+            <div class="mnemonics">
+              <span>浮点训练 · 整数推理</span>
+              <span>对称管权重 · 非对称管激活</span>
+              <span>算在整数 · 比例最后乘</span>
+            </div>
+          </div>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-quant">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 05 MAC -->
+      <section class="view" id="view-demo-mac">
+        <header class="page-head">
+          <div class="eyebrow">05 · TOPS ACCOUNTING</div>
+          <h1>算力账 · CPU vs NPU</h1>
+          <p class="lede">1 MAC = 2 ops；1 TOPS = 10¹² ops/s。用一层卷积对耗时。</p>
+        </header>
+
+        <div class="lab-grid">
+          <div class="panel wide">
+            <div class="panel-head"><span class="panel-title">层参数</span></div>
+            <div class="slider-grid">
+              <label>输入边长 <span id="v-hw">224</span><input type="range" id="s-hw" min="32" max="448" step="32" value="224" /></label>
+              <label>输出通道 Co <span id="v-co">64</span><input type="range" id="s-co" min="8" max="256" step="8" value="64" /></label>
+              <label>核边长 k <span id="v-k">3</span><input type="range" id="s-k" min="1" max="7" step="2" value="3" /></label>
+              <label>输入通道 Ci <span id="v-ci">3</span><input type="range" id="s-ci" min="1" max="64" step="1" value="3" /></label>
+              <label>NPU TOPS <span id="v-tops">2.0</span><input type="range" id="s-tops" min="0.5" max="6" step="0.5" value="2" /></label>
+              <label>利用率 % <span id="v-util">45</span><input type="range" id="s-util" min="10" max="100" step="5" value="45" /></label>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">计算量</span></div>
+            <div class="param-stack">
+              <div class="param wide-param"><span class="micro">MAC</span><strong id="m-mac">—</strong></div>
+              <div class="param wide-param"><span class="micro">OPS</span><strong id="m-ops">—</strong></div>
+              <div class="param wide-param"><span class="micro">GOP</span><strong id="m-gop">—</strong></div>
+            </div>
+            <div class="readout" id="mac-formula"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">理论耗时</span></div>
+            <div class="bar-chart" id="time-chart"></div>
+            <div class="param-stack">
+              <div class="param wide-param"><span class="micro">CPU PEAK</span><strong id="t-cpu">—</strong></div>
+              <div class="param wide-param"><span class="micro">CPU REAL ×5</span><strong id="t-cpu-real">—</strong></div>
+              <div class="param wide-param"><span class="micro">NPU IDEAL</span><strong id="t-npu">—</strong></div>
+              <div class="param wide-param"><span class="micro">NPU @UTIL</span><strong id="t-npu-real">—</strong></div>
+            </div>
+            <p class="hint">CPU 参考 A55@2GHz ≈ 0.128 TOPS。帧预算 33 ms。</p>
+          </div>
+
+          <div class="panel wide">
+            <div class="panel-head"><span class="panel-title">三种处理器</span></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th></th><th>CPU</th><th>GPU</th><th>NPU</th></tr></thead>
+                <tbody>
+                  <tr><td>目标</td><td>通用</td><td>同构线程</td><td>矩阵乘+固定算子</td></tr>
+                  <tr><td>并行</td><td>深流水+SIMD</td><td>SIMT</td><td>MAC 阵列</td></tr>
+                  <tr><td>控制</td><td>取指/译码/乱序</td><td>摊薄</td><td>任务级驱动</td></tr>
+                  <tr><td>精度</td><td>FP/INT 全</td><td>FP 为主</td><td>INT8/16(+FP16)</td></tr>
+                  <tr><td>一帧</td><td>数百 ms~s</td><td>数十 ms</td><td>数~数十 ms · 几瓦</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-mac">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 06 NPU -->
+      <section class="view" id="view-demo-npu">
+        <header class="page-head">
+          <div class="eyebrow">06 · MICROARCH</div>
+          <h1>NPU 核心内部</h1>
+          <p class="lede">MAC 阵列 + 片上缓冲 + DMA + 固定单元 + 任务控制器。点击模块。</p>
+        </header>
+
+        <div class="npu-layout">
+          <div class="npu-diagram" id="npu-diagram">
+            <div class="npu-block" data-part="buf"><div class="nb-title">权重 / 激活缓冲</div><div class="nb-sub">SRAM</div></div>
+            <div class="npu-arrow">→</div>
+            <div class="npu-block highlight selected" data-part="mac"><div class="nb-title">MAC 阵列</div><div class="nb-sub">32×32 INT8</div></div>
+            <div class="npu-arrow">→</div>
+            <div class="npu-block" data-part="acc"><div class="nb-title">累加器</div><div class="nb-sub">INT32</div></div>
+            <div class="npu-stack">
+              <div class="npu-block" data-part="act"><div class="nb-title">激活</div><div class="nb-sub">ReLU</div></div>
+              <div class="npu-block" data-part="pool"><div class="nb-title">池化</div><div class="nb-sub">Max/Avg</div></div>
+              <div class="npu-block" data-part="dq"><div class="nb-title">反量化</div><div class="nb-sub">×s</div></div>
+            </div>
+            <div class="npu-foot">
+              <div class="npu-block" data-part="dma"><div class="nb-title">DMA</div><div class="nb-sub">DDR ↔ on-chip</div></div>
+              <div class="npu-block" data-part="ctrl"><div class="nb-title">任务控制器</div><div class="nb-sub">task list</div></div>
+            </div>
+          </div>
+          <aside class="panel npu-detail" id="npu-detail">
+            <div class="panel-head"><span class="panel-title" id="npu-detail-title">MAC 阵列</span></div>
+            <div id="npu-detail-body">
+              <p>1024 INT8 MAC/拍 × 1 GHz × 2 ops ≈ <b>2 TOPS</b>（RK3588 单核量级）。</p>
+              <p>循环摊成空间：权重/输入在缓冲复用，部分和沿行累加。真实利用率 30~60%。</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-head"><span class="panel-title">数据流 · 谁少跑路</span></div>
+          <div class="dataflow-cards">
+            <button class="df-card active" data-df="ws"><b>权重固定</b><span>权重住阵列</span></button>
+            <button class="df-card" data-df="os"><b>输出固定</b><span>累加不出列</span></button>
+            <button class="df-card" data-df="rs"><b>行固定</b><span>Eyeriss</span></button>
+            <button class="df-card" data-df="sys"><b>脉动阵列</b><span>邻居泵血</span></button>
+          </div>
+          <p class="hint" id="df-hint">权重只读一次，复用率最高——每个权重要用几万次。</p>
+        </div>
+
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-npu">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 07 ATTN -->
+      <section class="view" id="view-demo-attn">
+        <header class="page-head">
+          <div class="eyebrow">07 · ATTENTION</div>
+          <h1>注意力 · Q / K / V</h1>
+          <p class="lede">「我 爱 猫」：点积相关度 → softmax → 加权平均 → 新表示。</p>
+        </header>
+
+        <div class="lab-grid">
+          <div class="panel wide">
+            <div class="panel-head">
+              <span class="panel-title">四步走</span>
+              <span class="step-badge" id="attn-step-label">第 0 步 / 4</span>
+            </div>
+            <div class="controls">
+              <button class="secondary-btn" id="attn-prev">←</button>
+              <button class="primary-btn" id="attn-next">下一步 →</button>
+              <button class="secondary-btn" id="attn-reset">重置</button>
+            </div>
+            <div class="attn-stage">
+              <div class="attn-words" id="attn-words"></div>
+              <div>
+                <div class="micro" id="attn-matrix-label">相关度矩阵 Q·Kᵀ</div>
+                <div class="matrix attn-matrix" id="attn-matrix"></div>
+              </div>
+              <div class="attn-result">
+                <div class="micro">「爱」的新表示</div>
+                <div class="attn-vector" id="attn-vector">[1, 1]</div>
+              </div>
+            </div>
+            <div class="readout" id="attn-formula">选择「爱」作为 Query，观察它如何吸收上下文。</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">查资料类比</span></div>
+            <div class="analogy">
+              <div><span class="ana-k">Q</span>脑子里的问题</div>
+              <div><span class="ana-k">K</span>每本书的标题</div>
+              <div><span class="ana-k">V</span>书的内容</div>
+            </div>
+            <p class="hint">点积 = 相关度 = 默契度。Q 与 K 越像，取越多对应 V。</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">N² 账</span></div>
+            <label class="inline-slider">上下文 N <span id="v-nctx">1000</span>
+              <input type="range" id="s-nctx" min="100" max="4000" step="100" value="1000" />
+            </label>
+            <div class="param-stack" style="margin-top:12px">
+              <div class="param wide-param"><span class="micro">N²</span><strong id="m-n2">1,000,000</strong></div>
+              <div class="param wide-param"><span class="micro">REL</span><strong id="m-n2-rel">1.0×</strong></div>
+            </div>
+            <div class="bar-chart" id="n2-chart"></div>
+            <p class="hint">词翻倍 → 算力 4 倍。<b>平方增长</b>，不是指数。CNN 看局部，大模型看全局。</p>
+          </div>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-attn">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 08 PIPE -->
+      <section class="view" id="view-demo-pipe">
+        <header class="page-head">
+          <div class="eyebrow">08 · DEPLOYMENT</div>
+          <h1>部署链路</h1>
+          <p class="lede">训练 → ONNX → .rknn（量化）→ 推板 → 运行时推理。</p>
+        </header>
+
+        <div class="pipeline" id="pipeline">
+          <button class="pipe-step active" data-step="0"><div class="ps-num">1</div><div class="ps-title">训练</div><div class="ps-sub">PT / TF</div></button>
+          <div class="pipe-line"></div>
+          <button class="pipe-step" data-step="1"><div class="ps-num">2</div><div class="ps-title">ONNX</div><div class="ps-sub">中间格式</div></button>
+          <div class="pipe-line"></div>
+          <button class="pipe-step" data-step="2"><div class="ps-num">3</div><div class="ps-title">.rknn</div><div class="ps-sub">Toolkit2</div></button>
+          <div class="pipe-line"></div>
+          <button class="pipe-step" data-step="3"><div class="ps-num">4</div><div class="ps-title">推板</div><div class="ps-sub">adb / scp</div></button>
+          <div class="pipe-line"></div>
+          <button class="pipe-step" data-step="4"><div class="ps-num">5</div><div class="ps-title">推理</div><div class="ps-sub">librknnrt</div></button>
+        </div>
+
+        <div class="panel" id="pipe-detail">
+          <div class="panel-head"><span class="panel-title" id="pipe-detail-title">1 · 训练</span></div>
+          <div id="pipe-detail-body"></div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-head"><span class="panel-title">系统分工</span></div>
+          <div class="sys-flow">
+            <div class="sys-node">摄像头</div>
+            <div class="sys-arrow">→</div>
+            <div class="sys-node cpu">CPU / RGA<small>缩放 · 色转</small></div>
+            <div class="sys-arrow">→</div>
+            <div class="sys-node npu">NPU<small>卷积 · 全连接</small></div>
+            <div class="sys-arrow">→</div>
+            <div class="sys-node cpu">CPU<small>NMS · 业务</small></div>
+          </div>
+          <p class="hint">不支持算子自动回退 CPU。.rknn 绑定芯片，不能跨片直跑。</p>
+        </div>
+
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="demo-pipe">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- FULL MODEL: YOLOv5s on RK3576 -->
+      <section class="view" id="view-model">
+        <header class="page-head">
+          <div class="eyebrow">M · FULL MODEL WALKTHROUGH</div>
+          <h1>YOLOv5s · RK3576 全流程</h1>
+          <p class="lede">一条真实模型从权重到板端框的完整路径。点阶段看代码、张量形状与排查点。对照 rknn_model_zoo。</p>
+        </header>
+
+        <div class="model-card">
+          <div class="mc-item"><span class="micro">MODEL</span><strong>YOLOv5s</strong></div>
+          <div class="mc-item"><span class="micro">INPUT</span><strong>1×3×640×640</strong></div>
+          <div class="mc-item"><span class="micro">TASK</span><strong>目标检测 COCO</strong></div>
+          <div class="mc-item"><span class="micro">TARGET</span><strong>RK3576</strong></div>
+          <div class="mc-item"><span class="micro">QUANT</span><strong>INT8 PTQ</strong></div>
+          <div class="mc-item"><span class="micro">ZOOS</span><strong>rknn_model_zoo</strong></div>
+        </div>
+
+        <div class="model-steps" id="model-steps">
+          <button class="mstep active" data-mstep="0"><i>00</i><span>模型卡</span></button>
+          <button class="mstep" data-mstep="1"><i>01</i><span>取权重</span></button>
+          <button class="mstep" data-mstep="2"><i>02</i><span>导出 ONNX</span></button>
+          <button class="mstep" data-mstep="3"><i>03</i><span>转 .rknn</span></button>
+          <button class="mstep" data-mstep="4"><i>04</i><span>量化校准</span></button>
+          <button class="mstep" data-mstep="5"><i>05</i><span>PC 仿真</span></button>
+          <button class="mstep" data-mstep="6"><i>06</i><span>推到板端</span></button>
+          <button class="mstep" data-mstep="7"><i>07</i><span>七步 API</span></button>
+          <button class="mstep" data-mstep="8"><i>08</i><span>预/后处理</span></button>
+          <button class="mstep" data-mstep="9"><i>09</i><span>验收排查</span></button>
+        </div>
+
+        <div class="panel" id="model-detail">
+          <div class="panel-head">
+            <span class="panel-title" id="model-detail-title">00 · 模型卡</span>
+            <span class="step-badge" id="model-where">PC / 板端 / 两者</span>
+          </div>
+          <div id="model-detail-body"></div>
+        </div>
+
+        <div class="panel" style="margin-top:14px">
+          <div class="panel-head">
+            <span class="panel-title">数据形态穿越整条链</span>
+            <button class="secondary-btn" id="model-play-flow">▶ 播放数据流</button>
+          </div>
+          <div class="tensor-flow" id="tensor-flow">
+            <div class="t-node" data-t="0">
+              <div class="micro">CAM / JPG</div>
+              <div class="t-shape">1920×1080<br/>NV12 / BGR</div>
+            </div>
+            <div class="t-arrow">→</div>
+            <div class="t-node" data-t="1">
+              <div class="micro">RGA</div>
+              <div class="t-shape">640×640<br/>RGB · letterbox</div>
+            </div>
+            <div class="t-arrow">→</div>
+            <div class="t-node" data-t="2">
+              <div class="micro">QUANT</div>
+              <div class="t-shape">INT8<br/>scale/zero</div>
+            </div>
+            <div class="t-arrow">→</div>
+            <div class="t-node npu" data-t="3">
+              <div class="micro">NPU</div>
+              <div class="t-shape">1×255×80×80<br/>+ 2 尺度…</div>
+            </div>
+            <div class="t-arrow">→</div>
+            <div class="t-node" data-t="4">
+              <div class="micro">CPU DECODE</div>
+              <div class="t-shape">boxes ×8400<br/>obj·cls</div>
+            </div>
+            <div class="t-arrow">→</div>
+            <div class="t-node" data-t="5">
+              <div class="micro">NMS</div>
+              <div class="t-shape">若干框<br/>label+score</div>
+            </div>
+          </div>
+          <p class="hint" id="tensor-hint">点击节点查看该段在硬件/软件上谁负责、数据为何变。</p>
+        </div>
+
+        <div class="lab-grid" style="margin-top:14px">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">一层卷积的账（640 输入示意）</span></div>
+            <div class="param-stack">
+              <div class="param wide-param"><span class="micro">BACKBONE</span><strong>Conv×N + C3</strong></div>
+              <div class="param wide-param"><span class="micro">NECK</span><strong>FPN + PAN</strong></div>
+              <div class="param wide-param"><span class="micro">HEAD</span><strong>3 尺度检测头</strong></div>
+              <div class="param wide-param"><span class="micro">PARAMS</span><strong>~7.2M</strong></div>
+              <div class="param wide-param"><span class="micro">INT8 SIZE</span><strong>~7MB 级</strong></div>
+            </div>
+            <p class="hint">结构不用背细节：CNN 零件箱（卷积+BN折叠+ReLU+残差）+ 多尺度输出。NPU 只跑主力层。</p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">你板子上的关键事实</span></div>
+            <ul class="bullets">
+              <li><b>双核</b> <code>core_mask</code>：0 / 1 / 0_1（无 2）</li>
+              <li><b>6 TOPS</b> 是稀疏口径；实测约 3588 的 55~70%</li>
+              <li><b>RGA2-Pro ×2</b> 做缩放/色转，别用 CPU 硬扛</li>
+              <li><b>版本</b>：Toolkit2 v2.3.2 ↔ librknnrt 配套；驱动 ≥0.9.8（LLM）</li>
+              <li><b>第一个任务</b>：从 model zoo 抄，不要从零写</li>
+            </ul>
+            <div class="ic-note">
+              <div class="micro">DEBUG SPLIT</div>
+              <p>PC 仿真对、板端错 → 嫌疑驱动/硬件；仿真也错 → 嫌疑量化/模型。这是你熟悉的「分层定位」。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="model">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- SEARCH -->
+      <section class="view" id="view-search">
+        <header class="page-head">
+          <div class="eyebrow">S · FULL-TEXT SEARCH</div>
+          <h1>讲义搜索</h1>
+          <p class="lede">全文检索 27 篇讲义与问答收录。空格分隔多词 = 要求全部命中。Ctrl+K 随时唤起。</p>
+        </header>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">关键词</span><span class="step-badge" id="search-meta">—</span></div>
+          <input type="search" id="search-input" class="search-input" placeholder="例如：core_mask · 熄屏 · 量化 校准 · panfrost · BN 折叠" autocomplete="off" />
+        </div>
+        <div class="search-results" id="search-results">
+          <p class="hint">输入关键词开始。回车跳到第一个命中的讲义。</p>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="search">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- MILESTONES -->
+      <section class="view" id="view-milestones">
+        <header class="page-head">
+          <div class="eyebrow">✓ · MILESTONES</div>
+          <h1>里程碑</h1>
+          <p class="lede">阶段五实践里程碑的真实进度：已完成带日期与证据，未完成带相关入口。</p>
+        </header>
+        <div class="ms-list" id="ms-list"></div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="milestones">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- CHEAT SHEET -->
+      <section class="view" id="view-cheat">
+        <header class="page-head">
+          <div class="eyebrow">BOARD · CHEAT SHEET</div>
+          <h1>板子小抄</h1>
+          <p class="lede">DshanPi-A1 实战速查。每一条都是这台板子上真实发生过的事，不是转抄。</p>
+        </header>
+
+        <div class="lab-grid">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">连接速查</span></div>
+            <div class="table-wrap"><table class="data-table">
+              <thead><tr><th>用途</th><th>命令 / 地址</th></tr></thead>
+              <tbody>
+                <tr><td>ssh（日常主力）</td><td><code>ssh root@192.168.31.204</code> · 密码 100ask</td></tr>
+                <tr><td>VNC（看桌面）</td><td><code>192.168.31.204:5900</code> · 密码 100ask</td></tr>
+                <tr><td>SFTP（传文件）</td><td>MobaXterm 左侧面板，拖拽即传</td></tr>
+                <tr><td>串口（救砖）</td><td><b>1500000</b> 波特率 · CH343/FT232</td></tr>
+              </tbody>
+            </table></div>
+            <p class="hint">桌面自动登录 dev/100ask；ssh 用 root/100ask。GDM 的 PAM 禁止 root 自动登录，别硬刚。</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">排查三件套（本板正确姿势）</span></div>
+            <ul class="bullets">
+              <li>驱动版本：<code>cat /sys/kernel/debug/rknpu/version</code> —— <b>/proc/rknpu/version 在本板不存在</b></li>
+              <li>NPU 占用：<code>cat /sys/kernel/debug/rknpu/load</code> → 输出 Core0/Core1，双核实锤</li>
+              <li>驱动报错：<code>dmesg | grep -i rknpu</code></li>
+              <li>运行时：<code>strings /usr/lib/librknnrt.so | grep -i version</code>（当前 2.3.2）</li>
+            </ul>
+            <div class="ic-note">
+              <div class="micro">版本铁律</div>
+              <p>PC toolkit2 = 板端 librknnrt = rknn_server 三者同版本；驱动 ≥0.9.8 是 RKLLM 硬门槛。</p>
+            </div>
+          </div>
+
+          <div class="panel wide">
+            <div class="panel-head"><span class="panel-title">黑屏三分法（先分流再动手）</span></div>
+            <div class="table-wrap"><table class="data-table">
+              <thead><tr><th>证据</th><th>结论 → 修法</th></tr></thead>
+              <tbody>
+                <tr><td>dri summary 显示 ACTIVE + 服务端截屏有画面</td><td>熄屏/DPMS → <code>gsettings set org.gnome.desktop.session idle-delay 0</code> + <code>xset dpms force on</code></td></tr>
+                <tr><td>summary ACTIVE + 服务端截屏纯色小图</td><td>渲染不落地（Panfrost buffer 不共享）→ <code>/etc/X11/Xsession.d/95libgl-software</code> 写 <code>export LIBGL_ALWAYS_SOFTWARE=1</code></td></tr>
+                <tr><td>dmesg 见 <code>lane can't ready / poweron failed</code></td><td>HDMI PHY 低频锁不上 → armbianEnv.txt 强制 720p（已固化）+ 桌面走 X11</td></tr>
+                <tr><td>ping 丢包率飙升 → 100%</td><td>线缆/供电 → 查网口灯、确认 PD ≥30W、拔电复位</td></tr>
+              </tbody>
+            </table></div>
+            <p class="hint">判定顺序：先 ping（网络在不在）→ 再 summary（信号在不在）→ 再 scrot（渲染有没有）。三个证据三十秒分流。</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">跑模型一条龙</span></div>
+            <ul class="bullets">
+              <li>WSL 编译：<code>GCC_COMPILER=aarch64-linux-gnu bash build-linux.sh -t rk3576 -a aarch64 -d yolov5</code></li>
+              <li>传板：<code>sshpass -p 100ask scp -r install/rk3576_linux_aarch64/rknn_yolov5_demo root@192.168.31.204:/root/</code></li>
+              <li>运行：<code>cd /root/rknn_yolov5_demo && LD_LIBRARY_PATH=lib ./rknn_yolov5_demo model/yolov5.rknn model/bus.jpg</code></li>
+              <li>验 NPU：连续推理时 <code>cat /sys/kernel/debug/rknpu/load</code> 应非 0（实测 Core0 5~8%）</li>
+            </ul>
+            <div class="ic-note">
+              <div class="micro">WSL 环境坑</div>
+              <p>py3.12：setuptools&lt;81（pkg_resources 被移除）+ onnx==1.16.1（mapping 被移除）；交叉编译 g++-aarch64-linux-gnu 是独立包。</p>
+            </div>
+          </div>
+
+          <div class="panel wide">
+            <div class="panel-head"><span class="panel-title">已踩坑速览（一句话版）</span></div>
+            <div class="table-wrap"><table class="data-table">
+              <thead><tr><th>坑</th><th>一句话修法</th></tr></thead>
+              <tbody>
+                <tr><td>HDMI 无输出（屏接 PC 却正常）</td><td>PHY 低频 bug → armbianEnv.txt 强制 1280x720@60e；桌面走 X11 + xorg.conf</td></tr>
+                <tr><td>drm.edid_firmware 覆盖无效</td><td>厂商 HDMI 驱动绕过 DRM 核心自读 DDC —— 别在这条路上浪费时间</td></tr>
+                <tr><td>Xorg 报 Cannot run in framebuffer mode</td><td>多 DRM 卡 → Device 段加 <code>Option "kmsdev" "/dev/dri/card0"</code></td></tr>
+                <tr><td>x11vnc 黑屏 / SHM 报错 / 键盘乱</td><td><code>-noshm</code>（本板 X_ShmAttach 必 BadAccess）+ <code>-xkb</code></td></tr>
+                <tr><td>远程会话卡在文本向导不动</td><td>armbian-firstlogin 劫持 → <code>rm /root/.not_logged_in_yet</code></td></tr>
+                <tr><td>开机不进桌面</td><td><code>ln -s /usr/lib/systemd/system/gdm.service /etc/systemd/system/display-manager.service</code></td></tr>
+                <tr><td>root 自动登录被拒</td><td>PAM <code>user != root</code> → 用普通用户 dev 自动登录</td></tr>
+                <tr><td>网口显示 NO-CARRIER</td><td>双网口：end1 才是在用的，end0 空着是常态</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="cheat">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 09 QUIZ -->
+      <section class="view" id="view-quiz">
+        <header class="page-head">
+          <div class="eyebrow">09 · SELF TEST</div>
+          <h1>自测题库</h1>
+          <p class="lede">答完即时反馈。可筛选错题重做。</p>
+        </header>
+
+        <div class="quiz-toolbar">
+          <div class="quiz-score">SCORE <strong id="quiz-score">0</strong><span class="dim"> / </span><span id="quiz-total">0</span>
+            <span class="quiz-acc" id="quiz-acc"></span>
+          </div>
+          <div class="controls">
+            <button class="secondary-btn" id="quiz-filter-all">全部</button>
+            <button class="secondary-btn" id="quiz-filter-wrong">只看错题</button>
+            <button class="primary-btn" id="quiz-restart">重新开始</button>
+          </div>
+        </div>
+        <div class="quiz-list" id="quiz-list"></div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="quiz">标记掌握</button>
+        </div>
+      </section>
+
+      <!-- 10 CARDS -->
+      <section class="view" id="view-cards">
+        <header class="page-head">
+          <div class="eyebrow">10 · FLASHCARDS</div>
+          <h1>闪卡复习</h1>
+          <p class="lede">先想答案再翻面。空格翻卡，←→ 切换。</p>
+        </header>
+
+        <div class="flash-toolbar">
+          <div class="controls">
+            <button class="secondary-btn" id="flash-prev">←</button>
+            <button class="primary-btn" id="flash-flip">翻卡</button>
+            <button class="secondary-btn" id="flash-next">→</button>
+            <button class="secondary-btn" id="flash-shuffle">洗牌</button>
+            <span class="step-badge" id="flash-count">1 / 1</span>
+          </div>
+        </div>
+        <div class="flashcard" id="flashcard">
+          <div class="flash-inner" id="flash-inner">
+            <div class="flash-face flash-front" id="flash-front">问题</div>
+            <div class="flash-face flash-back" id="flash-back">答案</div>
+          </div>
+        </div>
+        <div class="flash-dots" id="flash-dots"></div>
+        <div class="mark-row">
+          <button class="secondary-btn mark-btn" data-module="cards">标记掌握</button>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="lectures.js"></script>
+  <script src="lecture-viz.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
