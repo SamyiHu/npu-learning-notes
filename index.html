@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-CN" style="color-scheme: dark">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  
   <title>NPU Lab · 互动学习舱</title>
-  <link rel="stylesheet" href="styles.css" />
+  <script>
+      (function () {
+        var t = localStorage.getItem("npu-theme") || "light";
+        document.documentElement.style.colorScheme = t;
+        if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">跳到正文</a>
   <div class="app">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
@@ -18,15 +26,18 @@
           <div class="brand-kicker">RK3576 · IC LAB</div>
           <div class="brand-title">NPU Lab</div>
         </div>
+        <button class="theme-toggle" id="theme-toggle" title="切换 浅色/深色 主题" aria-label="切换主题">☀</button>
       </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav">目录</button>
 
       <div class="meter">
         <div class="meter-head">
-          <span class="micro">MASTERY</span>
+          <span class="micro">READING</span>
           <span class="meter-val" id="progress-pct">0%</span>
         </div>
         <div class="meter-track"><div class="meter-fill" id="progress-fill"></div></div>
-        <div class="meter-sub" id="progress-meta">0 / 11 模块已掌握</div>
+        <div class="meter-sub" id="progress-meta">已读 0 / 30 篇</div>
       </div>
 
       <nav class="nav" id="nav" aria-label="模块导航">
@@ -59,14 +70,14 @@
       </div>
     </aside>
 
-    <main class="main" id="main">
+    <main class="main" id="main" tabindex="-1">
       <!-- 00 HOME -->
       <section class="view active" id="view-home">
         <header class="page-head home-head">
           <div class="eyebrow">NPU SYSTEM LAB · INTERACTIVE</div>
           <h1>把芯片原理<br /><em>拧成可操作的仪表</em></h1>
           <p class="lede">
-            面向 IC 验证视角：<b>讲义全文已嵌入</b>，可手算卷积与量化、对 TOPS 账、拆 MAC 阵列、走完 YOLO 部署。
+            面向零基础与 IC 验证视角：<b>讲义全文已嵌入</b>，从数字/Linux/张量开始，手算卷积与量化、对 TOPS 账、拆 MAC 阵列、走完 YOLO 部署。
             进度存在本机。
           </p>
           <div class="hero-meta">
@@ -75,6 +86,17 @@
             <span><b>FOCUS</b> 推理 · 不训模型</span>
           </div>
         </header>
+
+        <div class="resume-bar" id="resume-bar" hidden>
+          <div class="resume-copy">
+            <span class="micro">CONTINUE · 继续上次</span>
+            <b id="resume-title">—</b>
+          </div>
+          <div class="controls resume-actions">
+            <button class="primary-btn" id="resume-go">继续阅读</button>
+            <button class="secondary-btn" id="resume-start">从头开始</button>
+          </div>
+        </div>
 
         <div class="die-map-wrap">
           <div class="section-rule">
@@ -236,7 +258,7 @@
         <header class="page-head">
           <div class="eyebrow">01 · CURRICULUM</div>
           <h1>学习路线</h1>
-          <p class="lede">主线五阶段 + Linux/SoC 并行补课 + LLM 进阶。里程碑可对照讲义勾选。</p>
+          <p class="lede">阶段 0 零基础补课 + 主线五阶段 + Linux/SoC 并行补课 + LLM 进阶。里程碑可对照讲义勾选。</p>
         </header>
         <div class="path-list" id="path-list"></div>
         <div class="mark-row">
@@ -1059,7 +1081,7 @@
             <div class="panel-head"><span class="panel-title">你板子上的关键事实</span></div>
             <ul class="bullets">
               <li><b>双核</b> <code>core_mask</code>：0 / 1 / 0_1（无 2）</li>
-              <li><b>6 TOPS</b> 是稀疏口径；实测约 3588 的 55~70%</li>
+              <li><b>6 TOPS</b> 是稀疏口径；单核吞吐与 3588 互有胜负，3588 强在三核/CPU/内存位宽</li>
               <li><b>RGA2-Pro ×2</b> 做缩放/色转，别用 CPU 硬扛</li>
               <li><b>版本</b>：Toolkit2 v2.3.2 ↔ librknnrt 配套；驱动 ≥0.9.8（LLM）</li>
               <li><b>第一个任务</b>：从 model zoo 抄，不要从零写</li>
@@ -1249,7 +1271,7 @@
       </section>
     </main>
   </div>
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <script src="lectures.js"></script>
   <script src="lecture-viz.js"></script>
   <script src="app.js"></script>

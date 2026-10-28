@@ -10,12 +10,21 @@
 
   const PATH = [
     {
+      stage: "阶段 0",
+      title: "零基础补课",
+      desc: "数字与精度、Python/C、Linux/WSL、矩阵、softmax、性能测量。",
+      lessons: ["bit/INT8/FP16", "数组与张量 shape", "Linux/SSH/动态库", "均值方差/softmax", "FPS/延迟/能效"],
+      milestone: "能读懂 shape，能手算点积和 softmax，能写实验记录模板",
+      prereq: "会使用电脑和复制命令即可；完全零基础从这里开始",
+      depth: "★ 入门，不需要预先学 AI",
+    },
+    {
       stage: "阶段一",
       title: "神经网络基础",
       desc: "NPU 要算什么：神经元、激活、全连接、卷积、池化/BN、模型全貌。",
       lessons: ["神经元/MAC", "激活函数", "全连接=矩阵乘", "卷积", "池化与BN", "模型全貌", "线代生存包"],
       milestone: "能手动算出一个小网络的前向传播",
-      prereq: "数字电路/体系结构/MCU（已有）· 线代可遗忘，1.5 课从直觉重讲",
+      prereq: "阶段 0；线代可遗忘，1.5 课从直觉重讲；硬件知识有则更快",
       depth: "★ 入门，手算为主",
     },
     {
@@ -24,7 +33,7 @@
       desc: "精度与量化；CPU/GPU/NPU 对比与算力账。",
       lessons: ["FP32→INT8 手算", "scale/零点", "TOPS 账", "四种瓶颈", "系统分工"],
       milestone: "手算一层卷积在 CPU 与 NPU 上各要多久；理解 INT8 推理",
-      prereq: "阶段一全部；流水线/SIMD/cache（体系结构课已有）",
+      prereq: "阶段一全部；流水线/SIMD/cache 可查 00-术语表",
       depth: "★★ 概念密，公式要手算",
     },
     {
@@ -42,7 +51,7 @@
       desc: "训练→ONNX→.rknn 五步；板端 C API 与排查。",
       lessons: ["部署全景", "量化工具", "PC 仿真", "七步 C API", "RGA 预处理", "版本配套"],
       milestone: "理解 .rknn 从何而来、到哪去",
-      prereq: "阶段二量化 + 阶段三任务列表/算子回退；会 WSL/Python 更顺",
+      prereq: "阶段二量化 + 阶段三任务列表/算子回退；会 WSL/Python 更顺，不会则回阶段 0",
       depth: "★★ 流程型，可无板先学",
     },
     {
@@ -73,7 +82,7 @@
       depth: "★★ 接到验证清单",
     },
     {
-      stage: "补课",
+      stage: "补课（数学）",
       title: "数学 · 指数/梯度直觉",
       desc: "Softmax 的 e^x、数值稳定、损失与梯度——够用即可，不阻塞推理主线。",
       lessons: ["指数对数 Softmax", "梯度下坡直觉"],
@@ -93,6 +102,62 @@
   ];
 
   const QUIZ = [
+    {
+      tag: "数字表示",
+      q: "1 byte 最多有多少个不同状态？",
+      opts: ["8", "16", "256", "1024"],
+      a: 2,
+      ex: "1 byte = 8 bit，每个 bit 两种状态，2^8 = 256。",
+    },
+    {
+      tag: "张量 shape",
+      q: "[1,3,640,640] 通常表示什么？",
+      opts: ["NCHW 图像张量", "一个 640 行的表", "权重矩阵", "FPS 数值"],
+      a: 0,
+      ex: "N=1 张样本，C=3 通道，H=640，W=640。",
+    },
+    {
+      tag: "量化公式",
+      q: "非对称量化中，真实值 x 大约如何由整数 q 恢复？",
+      opts: ["x=q+s", "x=q×s", "x=(q-z)×s", "x=q-z"],
+      a: 2,
+      ex: "zero point z 表示浮点 0 对应的整数位置，所以先减 z 再乘 scale。",
+    },
+    {
+      tag: "requantization",
+      q: "INT32 累加结果进入下一层 INT8 之前通常要做什么？",
+      opts: ["直接截断后继续", "requantize：缩放、舍入、饱和", "删除 scale", "转成字符串"],
+      a: 1,
+      ex: "每层激活有自己的 scale，所以要重新缩放到下一层的整数格式。",
+    },
+    {
+      tag: "Linux 排错",
+      q: "程序报缺少共享库，第一件事是什么？",
+      opts: ["直接换模型", "运行 ldd 看缺少什么", "重新刷板子", "关闭防火墙"],
+      a: 1,
+      ex: "ldd 可以显示 not found 的动态库，再检查 LD_LIBRARY_PATH/ldconfig。",
+    },
+    {
+      tag: "性能测量",
+      q: "为什么纯推理 FPS 不能代表端到端 FPS？",
+      opts: ["因为 FPS 不是时间", "因为端到端还包含解码、预处理、后处理和显示", "因为 NPU 不参与", "因为必须用 GPU"],
+      a: 1,
+      ex: "端到端还包含前后处理和系统调度，必须在测试条件中明确。",
+    },
+    {
+      tag: "NPU load",
+      q: "load 为 0 是否可以直接断定模型回退到 CPU？",
+      opts: ["是，绝对正确", "不能，还要看采样时机、权限、算子日志和是否正在推理", "是，但只有 RK3576", "不能，因为 load 不存在"],
+      a: 1,
+      ex: "load 是负载观测值，不等于完整利用率；要结合上下文确认。",
+    },
+    {
+      tag: "卷积 shape",
+      q: "无 padding、kernel=3、stride=1 时，输入 8x8 的输出尺寸是多少？",
+      opts: ["6x6", "7x7", "8x8", "9x9"],
+      a: 0,
+      ex: "floor((8-3)/1)+1 = 6。",
+    },
     {
       tag: "模型结构",
       q: "神经网络整体是什么结构？",
@@ -211,7 +276,7 @@
         "1 MAC = 1024 ops；每秒 6 帧",
       ],
       a: 1,
-      ex: "1 次乘 + 1 次加 = 2 ops。6 TOPS ≈ 每秒 3000 亿次乘加。",
+      ex: "1 次乘 + 1 次加 = 2 ops。6 TOPS ≈ 每秒 3 万亿次乘加（30000 亿）。",
     },
     {
       tag: "TOPS 推算",
@@ -421,15 +486,15 @@
     },
     {
       tag: "全流程",
-      q: "load 显示 0% 最可能说明？",
+      q: "load 显示 0% 时，正确做法是？",
       opts: [
-        "NPU 坏了",
-        "模型没真正跑在 NPU 上（回退/未加载/路径错）",
-        "FPS 太高",
-        "必须重启",
+        "直接断定 NPU 坏了",
+        "结合采样时机、权限、算子日志和 dmesg 一起查",
+        "立刻重启",
+        "换一块板子",
       ],
       a: 1,
-      ex: "排查三件套：version、load、dmesg。0% 先查模型路径/算子回退/驱动。",
+      ex: "0% 只是瞬时观测值，不能单独作为回退/未加载的证据；先确认正在推理、debugfs 权限、采样时机，再看算子回退与 dmesg。",
     },
     {
       tag: "全流程",
@@ -441,6 +506,12 @@
   );
 
   const FLASH = [
+    { q: "1 byte = ? bit？", a: "8 bit；2^8 = 256 个状态。" },
+    { q: "NCHW 是什么顺序？", a: "Batch、Channel、Height、Width。" },
+    { q: "非对称量化反量化公式？", a: "x ≈ (q - zero_point) × scale。" },
+    { q: "requantization 做什么？", a: "把 INT32 累加结果缩放、舍入、饱和成下一层格式。" },
+    { q: "缺共享库先执行什么？", a: "ldd ./程序，看 not found。" },
+    { q: "纯推理 FPS 和端到端 FPS 差在哪？", a: "端到端还包含解码、预处理、后处理、显示和调度。" },
     { q: "神经网络推理 = ?", a: "一堆矩阵乘法 + 非线性映射。NPU 只做推理（权重固定）。" },
     { q: "一个神经元在硬件上是什么？", a: "一次 MAC：y = w·x + b（乘累加）。" },
     { q: "矩阵乘法唯一规则？", a: "左行 × 右列，对应相乘再相加。口诀：外号管结果，内号管能否。" },
@@ -470,7 +541,7 @@
     { q: "运算强度？", a: "ops/byte。低于屋脊线（算力/带宽）则搬运成墙。" },
     { q: "BN 推理折叠？", a: "把 γ/σ、β−γμ/σ 并进卷积 W、b，硬件无独立 BN 单元。" },
     { q: "YOLO 部署第一站？", a: "rknn_model_zoo：convert.py + C demo + FPS 表，不要从零写。" },
-    { q: "load=0%？", a: "模型没上 NPU。查路径、算子回退、驱动 version/dmesg。" },
+    { q: "load=0%？", a: "不能直接断定为 CPU 回退；先查采样时机/权限/算子日志/dmesg。" },
     { q: "预处理谁做？", a: "RGA 硬件 resize/色转；零拷贝传 fd 给 NPU，CPU 别硬扛。" },
   ];
 
@@ -585,33 +656,149 @@ rknn.init_runtime()  # PC 仿真可选</pre>
 
   function updateProgressUI() {
     const p = loadProgress();
-    const done = MODULES.filter((m) => p[m]).length;
-    const pct = Math.round((done / MODULES.length) * 100);
-    $("#progress-pct").textContent = pct + "%";
-    $("#progress-fill").style.width = pct + "%";
-    $("#progress-meta").textContent = `${done} / ${MODULES.length} 模块已掌握`;
+    const total = lectList.length || 0;
+    const read = new Set(p._lectRead || []);
+    const readN = total ? lectList.filter((l) => read.has(l.id)).length : 0;
+    const pct = total ? Math.round((readN / total) * 100) : 0;
+    const selfN = MODULES.filter((m) => p[m]).length;
+    const pctEl = $("#progress-pct");
+    if (pctEl) pctEl.textContent = pct + "%";
+    const fill = $("#progress-fill");
+    if (fill) fill.style.width = pct + "%";
+    const meta = $("#progress-meta");
+    if (meta) {
+      meta.textContent = total
+        ? `已读 ${readN}/${total} 篇 · 自评 ${selfN}/${MODULES.length}`
+        : "讲义未加载";
+    }
     $$(".mark-btn").forEach((btn) => {
       const m = btn.dataset.module;
+      if (!btn.dataset.label) btn.dataset.label = btn.textContent.trim();
       btn.classList.toggle("done", !!p[m]);
-      btn.textContent = p[m] ? "已掌握 ✓" : "标记掌握";
+      btn.textContent = p[m] ? "已掌握 ✓" : btn.dataset.label;
     });
+    syncPathProgress();
   }
 
-  /* ---------- navigation ---------- */
-  function showView(name) {
-    $$(".view").forEach((v) => v.classList.remove("active"));
-    $$(".nav-item").forEach((n) => n.classList.toggle("active", n.dataset.view === name));
+  /* ---------- theme ---------- */
+  function applyTheme(t) {
+    if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+    else document.documentElement.removeAttribute("data-theme");
+    document.documentElement.style.colorScheme = t;
+    try { localStorage.setItem("npu-theme", t); } catch { /* 忽略 */ }
+    const btn = $("#theme-toggle");
+    if (btn) btn.textContent = t === "dark" ? "☾" : "☀";
+  }
+  function initTheme() {
+    applyCanvasPalette();
+    const btn = $("#theme-toggle");
+    if (btn) {
+      applyTheme(localStorage.getItem("npu-theme") || "light");
+      btn.addEventListener("click", () => {
+        const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+        applyTheme(next);
+        applyCanvasPalette();
+        drawDot(); drawLinear(); drawSoftmax(); drawQbins(); drawRace();
+      });
+    }
+  }
+
+  /* ---------- navigation & hash routing ---------- */
+  let booted = false;
+  let applyingRoute = false;
+
+  function loadMeta() {
+    try {
+      return JSON.parse(localStorage.getItem("npu-learn-meta") || "{}");
+    } catch {
+      return {};
+    }
+  }
+  function saveMeta(patch) {
+    try {
+      localStorage.setItem("npu-learn-meta", JSON.stringify({ ...loadMeta(), ...patch }));
+    } catch { /* 隐私模式下忽略 */ }
+  }
+  function currentViewName() {
+    const active = $(".view.active");
+    return active ? active.id.replace(/^view-/, "") : "home";
+  }
+  function lastLectureIndex() {
+    const id = loadMeta().lastLecture;
+    if (!id) return -1;
+    return lectList.findIndex((l) => l.id === id);
+  }
+  function routeFor(name) {
+    if (name === "lectures" && lectList[lectIdx]) return "#/lectures/" + lectList[lectIdx].id;
+    return "#/" + name;
+  }
+  function writeHash(name) {
+    if (!booted || applyingRoute) return;
+    const target = routeFor(name);
+    if (location.hash === target) return;
+    location.hash = target;
+  }
+  function showView(name, opts = {}) {
     const view = $("#view-" + name);
-    if (view) {
-      view.classList.add("active");
-      $("#main").scrollTop = 0;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!view) return;
+    $$(".view").forEach((v) => v.classList.remove("active"));
+    $$(".nav-item").forEach((n) => {
+      const on = n.dataset.view === name;
+      n.classList.toggle("active", on);
+      if (on) n.setAttribute("aria-current", "page");
+      else n.removeAttribute("aria-current");
+    });
+    view.classList.add("active");
+    $("#main").scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.body.classList.remove("nav-open");
+    const toggle = $("#nav-toggle");
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
+    if (!opts.silent) {
+      saveMeta({ lastView: name });
+      writeHash(name);
+    }
+  }
+  function applyRoute() {
+    if (applyingRoute) return;
+    applyingRoute = true;
+    try {
+      const raw = (location.hash || "").replace(/^#\/?/, "");
+      const parts = raw.split("/");
+      const known = parts[0] && $("#view-" + parts[0]) ? parts[0] : "";
+      const name = known || loadMeta().lastView || "home";
+      const here = currentViewName();
+      const sameLect = name !== "lectures" || (lectList[lectIdx] && lectList[lectIdx].id === parts[1]);
+      if (here === name && sameLect) return;
+      showView(name, { silent: true });
+      if (name === "lectures") {
+        let idx = parts[1] ? lectList.findIndex((l) => l.id === parts[1]) : -1;
+        if (idx < 0) idx = lastLectureIndex();
+        openLecture(idx >= 0 ? idx : 0, { silent: true });
+      }
+    } finally {
+      applyingRoute = false;
     }
   }
 
   $$(".nav-item").forEach((btn) => {
     btn.addEventListener("click", () => showView(btn.dataset.view));
   });
+  $("#nav-toggle")?.addEventListener("click", () => {
+    const open = document.body.classList.toggle("nav-open");
+    $("#nav-toggle").setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  $("#resume-go")?.addEventListener("click", () => {
+    const i = lastLectureIndex();
+    showView("lectures");
+    openLecture(i >= 0 ? i : 0);
+  });
+  $("#resume-start")?.addEventListener("click", () => {
+    showView("lectures");
+    openLecture(0);
+  });
+
   $$("[data-go]").forEach((el) => {
     el.addEventListener("click", () => showView(el.dataset.go));
     el.addEventListener("keydown", (e) => {
@@ -637,6 +824,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     if (confirm("确定清空全部学习进度？")) {
       localStorage.removeItem("npu-learn-progress");
       localStorage.removeItem("npu-quiz-state");
+      localStorage.removeItem("npu-learn-meta");
       updateProgressUI();
       initQuiz(true);
       toast("进度已重置");
@@ -657,6 +845,10 @@ rknn.init_runtime()  # PC 仿真可选</pre>
           <p class="path-prereq"><b>前提</b> ${s.prereq}</p>
           <p class="path-prereq"><b>密度</b> ${s.depth}</p>
           <div class="path-milestone">MILESTONE · ${s.milestone}</div>
+          <div class="path-prog" data-prog-stage="${s.stage}">
+            <span class="pp-text micro">已读 0/0 篇</span>
+            <div class="bar"><i style="width:0%"></i></div>
+          </div>
           <div class="controls" style="margin-top:12px">
             <button class="secondary-btn" data-open-lect-stage="${s.stage}">打开本阶段讲义</button>
           </div>
@@ -670,6 +862,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
         openFirstLectureOfStage(btn.dataset.openLectStage);
       });
     });
+    syncPathProgress();
   }
 
   /* ---------- convolution ---------- */
@@ -959,8 +1152,8 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     $("#attn-words").innerHTML = words
       .map((w, i) => {
         let extra = "";
-        if (attnStep >= 1) extra = `<span class="vec">点积 ${scores[i]}</span>`;
-        else if (attnStep >= 3) extra = `<span class="vec">权重 ${weights[i].toFixed(2)}</span>`;
+        if (attnStep >= 3) extra = `<span class="vec">权重 ${weights[i].toFixed(2)}</span>`;
+        else if (attnStep >= 1) extra = `<span class="vec">点积 ${scores[i]}</span>`;
         else extra = `<span class="vec">[${w.v.join(", ")}]</span>`;
         return `<div class="attn-word${i === attnQ ? " active" : ""}" data-aw="${i}">
           <span>${w.t}${i === attnQ ? " (Q)" : ""}</span>${extra}
@@ -1227,13 +1420,19 @@ rknn.init_runtime()  # PC 仿真可选</pre>
   });
 
   /* ---------- Principle theater ---------- */
-  const COPPER = "#d4895a";
-  const COPPER_HI = "#f0b07a";
-  const OK = "#5bbf9a";
-  const ALUM = "#b0b8c8";
-  const MUTED = "#918aa3";
-  const LINE = "#2c2839";
-  const INK = "#ede8f5";
+  let COPPER, COPPER_HI, OK, ALUM, MUTED, LINE, INK, COPPER_RGB, FLUX;
+  function applyCanvasPalette() {
+    const g = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    COPPER = g("--copper");
+    COPPER_HI = g("--copper-hi");
+    OK = g("--ok");
+    ALUM = g("--alum");
+    MUTED = g("--muted");
+    LINE = g("--line");
+    INK = g("--ink");
+    COPPER_RGB = g("--copper-rgb");
+    FLUX = g("--flux");
+  }
 
   function setupCanvas(cv) {
     if (!cv) return null;
@@ -1279,7 +1478,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     const scale = 70;
 
     // grid
-    ctx.strokeStyle = "rgba(44,40,57,0.8)";
+    ctx.strokeStyle = `rgba(${COPPER_RGB}, 0.22)`;
     ctx.lineWidth = 1;
     for (let i = 0; i < 8; i++) {
       ctx.beginPath();
@@ -1300,7 +1499,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     // projection of b onto a
     const proj = 2.2 * Math.cos(theta);
     ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = "rgba(240,176,122,0.45)";
+    ctx.strokeStyle = `rgba(${COPPER_RGB}, 0.45)`;
     ctx.beginPath();
     ctx.moveTo(ox + bx * scale, oy + by * scale);
     ctx.lineTo(ox + proj * scale, oy);
@@ -1493,7 +1692,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
       const hh = Math.max(4, w[i] * maxH);
       const x = x0 + i * (bw + gap);
       const y = base - hh;
-      ctx.fillStyle = i === 1 ? COPPER : "rgba(212,137,90,0.35)";
+      ctx.fillStyle = i === 1 ? COPPER : `rgba(${COPPER_RGB}, 0.35)`;
       ctx.fillRect(x, y, bw, hh);
       ctx.fillStyle = INK;
       ctx.font = "13px Segoe UI, sans-serif";
@@ -1526,7 +1725,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     $("#m-qb-s").textContent = s.toFixed(5);
     $("#m-qb-q").textContent = `${qClamped} → ${deq.toFixed(3)}`;
     $("#m-qb-e").textContent = (err >= 0 ? "+" : "") + err.toFixed(4);
-    $("#m-qb-e").style.color = Math.abs(err) <= s / 2 + 1e-9 ? OK : "#e85d7a";
+    $("#m-qb-e").style.color = Math.abs(err) <= s / 2 + 1e-9 ? OK : FLUX;
 
     if (!qbSetup) return;
     const { ctx, w: cw, h: ch } = qbSetup;
@@ -1538,9 +1737,9 @@ rknn.init_runtime()  # PC 仿真可选</pre>
 
     // continuum
     const grad = ctx.createLinearGradient(pad, 0, cw - pad, 0);
-    grad.addColorStop(0, "rgba(176,184,200,0.15)");
-    grad.addColorStop(0.5, "rgba(212,137,90,0.35)");
-    grad.addColorStop(1, "rgba(176,184,200,0.15)");
+    grad.addColorStop(0, `rgba(${COPPER_RGB}, 0.12)`);
+    grad.addColorStop(0.5, `rgba(${COPPER_RGB}, 0.35)`);
+    grad.addColorStop(1, `rgba(${COPPER_RGB}, 0.12)`);
     ctx.fillStyle = grad;
     ctx.fillRect(pad, y - 10, span, 20);
 
@@ -1580,7 +1779,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     ctx.fillText("q×s", xq - 12, y + 48);
 
     // error bracket
-    ctx.strokeStyle = Math.abs(err) <= s / 2 + 1e-9 ? OK : "#e85d7a";
+    ctx.strokeStyle = Math.abs(err) <= s / 2 + 1e-9 ? OK : FLUX;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(xf, y - 20);
@@ -1790,6 +1989,39 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     if (set.size >= lectList.length) p.lectures = true;
     saveProgress(p);
     updateProgressUI();
+    renderResume();
+  }
+
+  function unmarkLectRead(id) {
+    const p = loadProgress();
+    p._lectRead = (p._lectRead || []).filter((x) => x !== id);
+    if (p._lectRead.length < lectList.length) p.lectures = false;
+    saveProgress(p);
+    updateProgressUI();
+    renderResume();
+  }
+
+  function renderResume() {
+    const bar = $("#resume-bar");
+    if (!bar) return;
+    const i = lastLectureIndex();
+    const title = $("#resume-title");
+    const go = $("#resume-go");
+    const start = $("#resume-start");
+    const kicker = $(".resume-copy .micro");
+    if (i >= 0 && lectList[i]) {
+      if (kicker) kicker.textContent = "CONTINUE · 继续上次";
+      if (title) title.textContent = `第 ${i + 1} / ${lectList.length} 篇 · ${lectList[i].title}`;
+      if (go) go.textContent = "继续阅读";
+      if (start) start.hidden = false;
+    } else {
+      const first = lectList[0];
+      if (kicker) kicker.textContent = "START HERE · 从这里开始";
+      if (title) title.textContent = first ? `第 1 篇 · ${first.title}` : "按顺序从第一篇读起";
+      if (go) go.textContent = "开始学习";
+      if (start) start.hidden = true;
+    }
+    bar.hidden = false;
   }
 
   function renderLectIndex() {
@@ -1816,7 +2048,9 @@ rknn.init_runtime()  # PC 仿真可选</pre>
           </button>`
           )
           .join("");
-        return `<div class="lect-group"><div class="micro">${stage}</div></div>${items}`;
+        const inStage = groups[stage];
+        const doneInStage = inStage.filter(({ L }) => read.has(L.id)).length;
+        return `<div class="lect-group"><div class="micro">${stage}<span class="lg-count">${doneInStage}/${inStage.length}</span></div></div>${items}`;
       })
       .join("");
     $$(".lect-item", host).forEach((btn) => {
@@ -1838,7 +2072,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     return `<div class="lect-viz-gallery">${all.join("")}</div>`;
   }
 
-  function openLecture(i) {
+  function openLecture(i, opts = {}) {
     if (!lectList.length) return;
     lectIdx = Math.max(0, Math.min(lectList.length - 1, i));
     const L = lectList[lectIdx];
@@ -1865,6 +2099,11 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     if (main) main.scrollTop = 0;
     window.scrollTo({ top: 0, behavior: "smooth" });
     bindLectureLiveConv();
+    if (!opts.silent) {
+      saveMeta({ lastLecture: L.id, lastView: "lectures" });
+      writeHash("lectures");
+      renderResume();
+    }
   }
 
   function bindLectureLiveConv() {
@@ -1913,19 +2152,39 @@ rknn.init_runtime()  # PC 仿真可选</pre>
     paint();
   }
 
+  const STAGE_TO_LECT = {
+    "阶段 0": "00-零基础",
+    "补课（数学）": "09-数学补课",
+    阶段一: "01-神经网络基础",
+    阶段二: "02-为何需要NPU",
+    阶段三: "03-NPU硬件架构",
+    阶段四: "04-软件工具链",
+    阶段五: "05-实践",
+    并行: "07-Linux与SoC补课",
+    补课: "08-数电补课",
+    阶段六: "06-大模型与Transformer",
+  };
+
+  function stageCounts(stageName) {
+    const target = STAGE_TO_LECT[stageName] || stageName;
+    const list = lectList.filter((L) => L.stage === target);
+    const read = new Set(loadProgress()._lectRead || []);
+    return { total: list.length, read: list.filter((L) => read.has(L.id)).length };
+  }
+
+  function syncPathProgress() {
+    $$(".path-prog").forEach((box) => {
+      const { read, total } = stageCounts(box.dataset.progStage);
+      const label = $(".pp-text", box);
+      const bar = $(".bar i", box);
+      if (label) label.textContent = total ? `已读 ${read}/${total} 篇` : "无讲义";
+      if (bar) bar.style.width = total ? Math.round((read / total) * 100) + "%" : "0%";
+    });
+  }
+
   function openFirstLectureOfStage(stageKey) {
     // stage in PATH is 阶段一 etc; lectures use 01-神经网络基础
-    const map = {
-      阶段一: "01-神经网络基础",
-      阶段二: "02-为何需要NPU",
-      阶段三: "03-NPU硬件架构",
-      阶段四: "04-软件工具链",
-      阶段五: "05-实践",
-      并行: "07-Linux与SoC补课",
-      补课: "08-数电补课",
-      阶段六: "06-大模型与Transformer",
-    };
-    const target = map[stageKey] || stageKey;
+    const target = STAGE_TO_LECT[stageKey] || stageKey;
     const i = lectList.findIndex((L) => L.stage === target);
     openLecture(i >= 0 ? i : 0);
   }
@@ -1937,12 +2196,31 @@ rknn.init_runtime()  # PC 仿真可选</pre>
   $("#lect-next")?.addEventListener("click", () => lectDelta(1));
   $("#lect-prev-b")?.addEventListener("click", () => lectDelta(-1));
   $("#lect-next-b")?.addEventListener("click", () => lectDelta(1));
+  document.addEventListener("keydown", (e) => {
+    if (!$("#view-lectures")?.classList.contains("active")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      lectDelta(1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      lectDelta(-1);
+    }
+  });
   $("#lect-mark")?.addEventListener("click", () => {
     const L = lectList[lectIdx];
     if (!L) return;
-    markLectRead(L.id);
-    openLecture(lectIdx);
-    toast("已标记已读");
+    if (lectReadSet().has(L.id)) {
+      unmarkLectRead(L.id);
+      openLecture(lectIdx, { silent: true });
+      toast("已取消已读");
+    } else {
+      markLectRead(L.id);
+      openLecture(lectIdx, { silent: true });
+      toast("已标记已读");
+    }
   });
 
   /* ---------- Full model: YOLOv5s ---------- */
@@ -2166,7 +2444,7 @@ cat /sys/kernel/debug/rknpu/load   # 不应一直是 0</pre>
     { done: true, date: "09-10", title: "YOLOv5s 全链路（转换→编译→部署→推理）", ev: "bus.jpg 检出 person×3 + bus（最高 0.88）；推理时 Core0 5~8%", go: "model" },
     { done: false, date: "", title: "core_mask 单核 vs 双核 FPS 对比", ev: "记录加速比，解释为什么 ≠ 2×（03 课多核玩法）", go: "demo-npu" },
     { done: false, date: "", title: "W4A16 vs INT8（accuracy_analysis 精度 + FPS）", ev: "同一模型两种量化对比（02 课 W4 理论落地）", go: "demo-quant" },
-    { done: false, date: "", title: "（选做）Qwen2.5-1.5B w4a16 跑通", ev: "对照官方基准 20.4 tok/s（8G 内存档）", go: "lectures" },
+    { done: false, date: "", title: "（选做）Qwen2-0.5B w4a16 跑通", ev: "对照官方 32.56 tok/s（seqlen 128 / new_tokens 64；6G 内存档）", go: "lectures" },
   ];
   function renderMilestones() {
     const host = $("#ms-list");
@@ -2244,8 +2522,8 @@ cat /sys/kernel/debug/rknpu/load   # 不应一直是 0</pre>
     }).join("");
     $$(".search-result", host).forEach((el) =>
       el.addEventListener("click", () => {
-        openLecture(+el.dataset.i);
         showView("lectures");
+        openLecture(+el.dataset.i);
         highlightInLecture(searchLastTerm);
       })
     );
@@ -2324,6 +2602,7 @@ cat /sys/kernel/debug/rknpu/load   # 不应一直是 0</pre>
 
   /* ---------- boot ---------- */
   function boot() {
+    initTheme();
     updateProgressUI();
     renderPath();
     renderConv();
@@ -2338,7 +2617,7 @@ cat /sys/kernel/debug/rknpu/load   # 不应一直是 0</pre>
     initPrinciples();
     renderModelStep(0);
     renderLectIndex();
-    openLecture(0);
+    openLecture(0, { silent: true });
     renderBitflow();
     renderMilestones();
     initSearch();
@@ -2353,6 +2632,11 @@ cat /sys/kernel/debug/rknpu/load   # 不应一直是 0</pre>
       $("#npu-detail-title").textContent = info.title;
       $("#npu-detail-body").innerHTML = info.body;
     }
+    renderResume();
+    window.addEventListener("hashchange", applyRoute);
+    applyRoute();
+    booted = true;
+    writeHash(currentViewName());
   }
 
   boot();
