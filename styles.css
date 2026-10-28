@@ -1725,60 +1725,55 @@ input[type="range"]:focus-visible {
 }
 
 /* ─── Lecture reader ─── */
+/* 讲义目录：文档 TOC 定位 —— 去面板感、窄列、弱化，与主导航拉开层次 */
 .lect-layout {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 176px minmax(0, 1fr);
+  gap: 26px;
   align-items: start;
 }
 .lect-index {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  max-height: calc(100vh - 140px);
+  max-height: calc(100vh - 150px);
   overflow-x: hidden;
   overflow-y: auto;
   position: sticky;
   top: 20px;
+  padding: 4px 0 8px;
+  scrollbar-width: thin;
 }
 .lect-group {
-  padding: 10px 12px 4px;
-  border-bottom: 1px solid var(--line-soft);
-  position: sticky;
-  top: 0;
-  background: var(--panel);
-  z-index: 1;
+  padding: 14px 0 3px 12px;
 }
-.lect-group .micro { color: var(--copper); }
+.lect-group .micro {
+  color: var(--muted);
+  opacity: 0.85;
+  letter-spacing: 0.08em;
+}
+.lect-group .lg-count { color: var(--muted); opacity: 0.55; margin-left: 6px; }
 .lect-item {
-  display: flex;
+  display: block;
   width: 100%;
   text-align: left;
-  gap: 8px;
-  align-items: flex-start;
-  padding: 10px 12px;
+  padding: 5px 8px 5px 10px;
   border: none;
   border-left: 2px solid transparent;
   background: transparent;
   color: var(--muted);
   font-family: inherit;
-  font-size: 12.5px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.45;
   cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, opacity 0.12s;
 }
-.lect-item:hover { color: var(--ink); background: rgba(212,137,90,0.05); }
+.lect-item:hover { color: var(--ink); }
 .lect-item.active {
-  color: var(--ink);
-  background: var(--copper-dim);
+  color: var(--copper-hi);
   border-left-color: var(--copper);
+  font-weight: 600;
 }
-.lect-item .done-dot {
-  width: 6px;
-  height: 6px;
-  margin-top: 5px;
-  flex-shrink: 0;
-  background: var(--line);
-}
-.lect-item.read .done-dot { background: var(--ok); }
+.lect-item.read:not(.active) { opacity: 0.62; }
+.lect-item .done-dot { display: none; }
+.lect-item.read:not(.active) .lec-title::after { content: " ✓"; color: var(--ok); font-size: 10px; }
 
 .lect-main {
   border: 1px solid var(--line);

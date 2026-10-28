@@ -2043,8 +2043,7 @@ rknn.init_runtime()  # PC 仿真可选</pre>
           .map(
             ({ L, i }) => `
           <button class="lect-item${i === lectIdx ? " active" : ""}${read.has(L.id) ? " read" : ""}" data-lect="${i}">
-            <span class="done-dot"></span>
-            <span>${L.title}</span>
+            <span class="lec-title">${L.title}</span>
           </button>`
           )
           .join("");
