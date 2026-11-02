@@ -1,0 +1,11 @@
+{
+  "name": "L2-01-MAC阵列与数据流",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.147 preview",
+    "check": "npx --yes hyperframes@0.8.147 check",
+    "render": "npx --yes hyperframes@0.8.147 render",
+    "publish": "npx --yes hyperframes@0.8.147 publish"
+  }
+}

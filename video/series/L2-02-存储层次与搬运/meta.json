@@ -1,0 +1,14 @@
+{
+  "id": "L2-02-存储层次与搬运",
+  "name": "L2-02-存储层次与搬运",
+  "level": "L2",
+  "duration": 112.4,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 22,
+    "bpm": 84,
+    "key": 50,
+    "intensity": 0.8
+  },
+  "createdAt": "2026-10-11T15:36:24.318Z"
+}

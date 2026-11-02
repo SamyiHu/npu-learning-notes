@@ -2526,9 +2526,11 @@ input[type="range"]:focus-visible {
   font-size: 13.5px;
   padding: 6px 0;
   border-bottom: 1px solid var(--line-soft);
+  overflow-x: auto;
 }
 .md-eqline:last-child { border-bottom: none; }
-.md-eqmain { color: var(--alum); }
+/* 保留行内对齐空格：ASCII 公式/对照表的列对齐依赖它 */
+.md-eqmain { color: var(--alum); white-space: pre-wrap; }
 .md-eqarrow { color: var(--copper); }
 .md-eqnote { color: var(--muted); font-size: 12px; }
 

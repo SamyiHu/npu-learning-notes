@@ -1,0 +1,14 @@
+{
+  "id": "L2-03-量化与requantization",
+  "name": "L2-03-量化与requantization",
+  "level": "L2",
+  "duration": 95.46,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 23,
+    "bpm": 80,
+    "key": 48,
+    "intensity": 0.7
+  },
+  "createdAt": "2026-10-11T15:36:28.461Z"
+}

@@ -52,7 +52,7 @@ RKNN_NPU_CORE_AUTO              驱动自动分配（0）
 |---|---|---|---|---|
 | RK3566 / RK3568 | 1 TOPS | 1 | INT8 / INT16 | 只能整数量化；精度不够只能靠混合"INT16"扛 |
 | RK3562 | 1 TOPS | 1 | INT8（INT16 待确认） | 同上，入门档 |
-| RK3576 | 6 TOPS* | 2（官方确认，可独立/协同） | INT4/INT8/INT16/FP16/BF16/TF32 | 混合量化可留 FP16 层；W4A16/FlashAttention/稀疏推理独占（*6T 为稀疏口径，实测吞吐约为 3588 的 55~70%） |
+| RK3576 | 6 TOPS* | 2（官方确认，可独立/协同） | INT4/INT8/INT16/FP16/BF16/TF32 | 混合量化可留 FP16 层；W4A16/稀疏推理独占，FlashAttention 支持 RK3562/RK3576（*6T 为稀疏口径；单核吞吐与 3588 互有胜负，见 05 上手指引 §5 的官方 benchmark） |
 | RK3588 / S | 6 TOPS | 3 | INT4/INT8/INT16/FP16/BF16/TF32（官方） | 同上 + 三核并行 |
 | RV1103 / RV1106 | 0.5 TOPS | 1 | INT4/INT8/INT16 | 摄像头小芯片，能跑轻量模型 |
 
@@ -81,7 +81,7 @@ RKNN_NPU_CORE_AUTO              驱动自动分配（0）
 
 1. **重活都在用户态闭源库 librknnrt.so**：模型→命令流的"编译器"在库里。内核驱动很薄，官方说法是"只管上电、映射缓冲、递交任务"（主线上游开发者原话），连固件都不加载——和 GPU 那种"带固件的处理器"是两种流派
 2. **没有公开指令集**：任务列表格式未公开文档化（TRM 第 36 章只有寄存器级描述）。社区正在逆向（Mesa "Teflon" 项目、rocket 驱动），这也是"开源 NPU 栈"的前沿话题
-3. **算子不在硬件清单里 → 运行时自动回退 CPU**：表现为"NPU 占用率不满、CPU 旁路忙"，排查部署问题的常识
+3. **算子无法映射到 NPU → 可能回退 CPU**：表现为"NPU 负载不满、CPU 旁路忙"，但还要结合日志和工具确认，不能只看一个瞬时 load 数值
 
 ### 血统冷知识
 
@@ -98,7 +98,7 @@ RKNN_NPU_CORE_AUTO              驱动自动分配（0）
 | SoC 共享 SRAM | 1 MB（956KB 可分配给 IP，含 NPU） | 官方 User Guide |
 | 数据排布 | NC1HWC2（C2=16 通道打包） | 逆向资料 |
 | 寻址限制 | 任务用 32bit 物理指针，单缓冲限 4GB 空间 | 逆向资料 |
-| 系统能效 | 满载整机 +2~3W，~1 TOPS/W 量级 | 第三方实测，官方未公布 |
+| 系统能效 | 满载整机 +2~3W；按 6 TOPS 峰值折算约 2~3 TOPS/W，按有效吞吐约 1 TOPS/W 量级 | 第三方实测，官方未公布 |
 | DDR 带宽 | LPDDR4X ×64bit ≈ 34 GB/s 理论 | 按规格推算 |
 
 ---
@@ -108,7 +108,7 @@ RKNN_NPU_CORE_AUTO              驱动自动分配（0）
 ```
 内核驱动   drivers/rknpu/（DRM 框架，render node 形如 /dev/dri/renderD128，
            另有 misc 设备 /dev/rknpu）
-查驱动版本 cat /proc/rknpu/version          （如 RKNPU driver v0.9.8）
+查驱动版本 cat /sys/kernel/debug/rknpu/version 2>/dev/null || cat /proc/rknpu/version（本板优先查 debugfs）
 看 NPU 占用 cat /sys/kernel/debug/rknpu/load
 看频率/电压 /sys/kernel/debug/rknpu/{freq,volt,power}
 SRAM 状态   /sys/kernel/debug/rknpu/mm
@@ -140,3 +140,35 @@ RKNPU 这类"任务驱动型加速器"的验证清单，拿去对量：
 - [ ] 能列出 3 个 NPU 验证关注点（任务递交/IOMMU/多核仲裁…）
 
 **达成后：你能回答学习路线里阶段三的里程碑问题——"数据从 DDR 到算出结果的完整路径"。**
+
+---
+<!-- BEGINNER_EXERCISES -->
+## 小白练习与答案 · RKNPU 实例
+> 每题都要求写出过程或排查顺序；不要只写“懂了”。
+
+**计算 1**：RK3576 双核分别绑定两个模型，应该使用哪些 core mask？
+
+<details>
+<summary>答案</summary>
+
+Core0、Core1；单模型联合双核可用 Core0_1。
+
+</details>
+
+**解释 2**：librknnrt 和 rknpu 驱动分别做什么？
+
+<details>
+<summary>答案</summary>
+
+librknnrt 解析/生成任务并驱动运行时；内核驱动负责上电、映射、提交和中断管理。
+
+</details>
+
+**调试 3**：模型运行正确但 load 采样为 0，能直接断定 CPU 回退吗？
+
+<details>
+<summary>答案</summary>
+
+不能；还要看是否正在推理、debugfs 权限、采样时机、算子日志和 CPU 使用情况。
+
+</details>

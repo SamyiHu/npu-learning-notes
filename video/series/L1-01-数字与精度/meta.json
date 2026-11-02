@@ -1,0 +1,14 @@
+{
+  "id": "L1-01-数字与精度",
+  "name": "L1-01-数字与精度",
+  "level": "L1",
+  "duration": 120.48,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 11,
+    "bpm": 78,
+    "key": 57,
+    "intensity": 0.55
+  },
+  "createdAt": "2026-10-11T15:58:29.446Z"
+}

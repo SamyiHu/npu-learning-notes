@@ -1,0 +1,14 @@
+{
+  "id": "L1-02-矩阵与张量",
+  "name": "L1-02-矩阵与张量",
+  "level": "L1",
+  "duration": 94.35,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 12,
+    "bpm": 82,
+    "key": 55,
+    "intensity": 0.6
+  },
+  "createdAt": "2026-10-11T15:36:11.007Z"
+}

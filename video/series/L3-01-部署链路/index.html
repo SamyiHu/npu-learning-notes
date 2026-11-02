@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=1920, height=1080">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+@font-face{font-family:"Segoe UI";src:local("Segoe UI")}
+@font-face{font-family:"Microsoft YaHei";src:local("Microsoft YaHei")}
+@font-face{font-family:"Bahnschrift";src:local("Bahnschrift")}
+@font-face{font-family:"Cascadia Code";src:local("Cascadia Code")}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0B0A12}
+#root{position:relative;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:#EDE8F5}
+.bg-grid{position:absolute;inset:0;opacity:.4;background-image:linear-gradient(rgba(44,40,57,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(44,40,57,.6) 1px,transparent 1px);background-size:64px 64px}
+.bg-glow{position:absolute;width:1600px;height:900px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,color-mix(in srgb,#E85D7A 13%,transparent),transparent 66%)}
+.bg-dots{position:absolute;inset:0;opacity:.28;background-image:radial-gradient(rgba(91,191,154,.14) 1.5px,transparent 1.5px);background-size:26px 26px}
+.chrome{position:absolute;inset:30px 44px;z-index:60;pointer-events:none}
+.brand{position:absolute;left:0;top:0;display:flex;gap:14px;align-items:center;font-family:Bahnschrift;font-size:18px;letter-spacing:.18em;color:#918AA3}
+.brand-dot{width:10px;height:10px;background:#E85D7A;border-radius:50%;box-shadow:0 0 18px color-mix(in srgb,#E85D7A 70%,transparent)}
+.chapter{position:absolute;right:0;top:0;font-family:Bahnschrift,monospace;font-size:18px;color:#918AA3;letter-spacing:.12em}
+.progress{position:absolute;left:0;right:0;bottom:0;height:4px;background:#1A1723}
+.progress-fill{height:100%;width:0;background:#E85D7A;box-shadow:0 0 16px color-mix(in srgb,#E85D7A 65%,transparent)}
+.scene{position:absolute;inset:0;opacity:0;pointer-events:none}
+.hero{position:absolute;inset:86px 84px 96px;display:flex;flex-direction:column;justify-content:center}
+.kicker{font-family:Bahnschrift;font-size:21px;letter-spacing:.26em;color:#E85D7A;text-transform:uppercase;margin-bottom:18px}
+.warnk{letter-spacing:.26em;margin-bottom:14px;font-size:20px}
+.h{font-size:70px;line-height:1.08;font-weight:800;letter-spacing:-.03em}
+.h.big{font-size:96px}
+.s{margin-top:18px;font-size:28px;line-height:1.45;color:#918AA3;max-width:1200px}
+.chips{display:flex;gap:14px;margin-top:40px}
+.chip{border:1px solid #2C2839;background:rgba(18,17,26,.8);padding:12px 22px;font-family:"Cascadia Code",monospace;font-size:19px}
+.eq{margin-top:24px;font-size:23px;color:#918AA3}
+.eq b{color:#E85D7A}
+.blist{list-style:none;display:flex;flex-direction:column;gap:20px}
+.blist li{position:relative;padding-left:34px;font-size:28px;line-height:1.4;color:#EDE8F5}
+.blist li::before{content:'';position:absolute;left:0;top:14px;width:14px;height:3px;background:var(--tone,#E85D7A)}
+.blist.big li{font-size:30px}
+.blist.big{gap:26px;margin-top:38px;max-width:1150px}
+.split{display:flex;gap:70px;align-items:flex-start;margin-top:40px}
+.metric{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:26px 32px;min-width:280px;text-align:center}
+.ml{font-family:Bahnschrift,monospace;font-size:16px;letter-spacing:.2em;color:#918AA3}
+.mv{font-family:Bahnschrift,monospace;font-size:62px;color:#E85D7A;margin:12px 0 6px}
+.mu{font-family:"Cascadia Code",monospace;font-size:16px;color:#918AA3}
+.warnpanel{margin-top:38px;border:1px solid var(--tone);background:color-mix(in srgb,var(--tone) 9%,transparent);padding:30px 36px;max-width:1200px}
+.warnpanel ul{list-style:none;display:flex;flex-direction:column;gap:20px}
+.warnpanel li{position:relative;padding-left:34px;font-size:29px;line-height:1.4}
+.warnpanel li::before{content:'';position:absolute;left:0;top:14px;width:14px;height:3px;background:var(--tone)}
+.codebox{margin-top:38px;border-left:3px solid #E85D7A;background:rgba(18,17,26,.9);padding:24px 30px;max-width:1240px}
+.codebox.tall{max-width:1420px}
+.cl{font-family:"Cascadia Code",monospace;font-size:24px;line-height:1.6;color:#EDE8F5;display:flex;gap:16px;opacity:0}
+.cl .ln{color:#918AA3;min-width:24px}
+/* bits */
+.bits{display:flex;gap:12px;margin-top:48px}
+.bitcell{width:92px;height:100px;border:1px solid #2C2839;background:rgba(18,17,26,.85);display:flex;align-items:center;justify-content:center;font-family:Bahnschrift,monospace;font-size:34px;color:#918AA3}
+.bitrow{margin-top:14px;font-family:"Cascadia Code",monospace;font-size:40px;letter-spacing:18px;color:#E85D7A;height:50px}
+/* int8 */
+.tworow{display:flex;flex-direction:column;gap:20px;margin-top:48px}
+.trow{display:flex;gap:10px;align-items:center}
+.trow .b{width:66px;height:66px;border:1px solid #2C2839;background:rgba(18,17,26,.85);display:flex;align-items:center;justify-content:center;font-family:"Cascadia Code",monospace;font-size:28px}
+.trow em{font-family:Bahnschrift,monospace;font-size:26px;color:#E85D7A;font-style:normal;margin-left:16px}
+/* quant */
+.qgrid{display:flex;flex-direction:column;gap:14px;margin-top:40px;max-width:1300px}
+.qrow{display:flex;align-items:center;gap:20px;font-family:"Cascadia Code",monospace;font-size:24px}
+.qw{min-width:130px;color:#EDE8F5}
+.qop{color:#918AA3;min-width:80px}
+.qi{color:#918AA3;min-width:80px}
+.qo{min-width:90px;color:#E85D7A}
+.qbar{flex:1;height:16px;background:#191622;border:1px solid #2C2839;position:relative}
+.qbar i{position:absolute;left:0;top:0;bottom:0;width:0;background:#E85D7A;opacity:.55}
+/* money */
+.moneyset{display:flex;gap:80px;align-items:center;margin-top:56px}
+.money{display:flex;flex-direction:column;gap:26px}
+.mbox{position:relative;border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:20px 26px;min-width:300px}
+.mbox span{font-family:Bahnschrift,monospace;font-size:24px}
+.mbox i{position:absolute;left:26px;right:26px;bottom:14px;height:12px;width:0;background:#E85D7A;opacity:.7}
+/* ladder */
+.ladder{display:flex;flex-direction:column;gap:18px;margin-top:46px;max-width:1050px}
+.lrow{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:20px 26px;display:flex;align-items:center;gap:26px;width:0}
+.lrow b{font-size:28px;min-width:140px}
+.lrow span{font-family:"Cascadia Code",monospace;font-size:20px;color:#918AA3}
+/* tensor */
+.shapewrap{display:flex;gap:70px;align-items:center;margin-top:44px}
+.tensor{position:relative;width:520px;height:330px}
+.tlab{position:absolute;left:0;top:-30px;font-family:"Cascadia Code",monospace;font-size:20px;color:#E85D7A}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:34px}
+.tgrid span{width:96px;height:52px;border:1px solid #2C2839;background:rgba(18,17,26,.85)}
+.taxis{font-family:"Cascadia Code",monospace;font-size:20px;color:#918AA3;margin-top:14px}
+.shapeinfo{flex:1}
+/* mul */
+.mulscene{display:flex;align-items:center;gap:34px;margin-top:52px}
+.mgrid{display:grid;grid-template-columns:repeat(2,86px);gap:10px}
+.mgrid.col{grid-template-columns:86px}
+.mc2{width:86px;height:66px;border:1px solid #2C2839;background:rgba(18,17,26,.85);display:flex;align-items:center;justify-content:center;font-family:"Cascadia Code",monospace;font-size:26px}
+.mop{font-family:Bahnschrift,monospace;font-size:36px;color:#E85D7A}
+.mres{display:grid;grid-template-columns:86px;gap:10px}
+.mres .rv{width:86px;height:66px;border:1px solid #E85D7A;background:color-mix(in srgb,#E85D7A 16%,transparent);display:flex;align-items:center;justify-content:center;font-family:"Cascadia Code",monospace;font-size:26px;color:#E85D7A}
+/* dim */
+.dimwrap{display:flex;align-items:center;gap:28px;margin-top:52px}
+.dm{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:26px 32px;min-width:170px;text-align:center}
+.dm span{display:block;font-family:Bahnschrift,monospace;font-size:22px;color:#918AA3}
+.dm i{font-family:"Cascadia Code",monospace;font-size:30px;font-style:normal}
+.dm.res{border-color:#E85D7A}
+.dm.res i{color:#E85D7A}
+.dmop{font-family:Bahnschrift,monospace;font-size:34px;color:#E85D7A}
+/* core */
+.corewrap{display:flex;gap:70px;align-items:center;margin-top:44px}
+.macgrid{display:grid;grid-template-columns:repeat(8,52px);gap:8px}
+.mac{width:52px;height:52px;border:1px solid #443C52;background:#1A1723}
+.coreinfo{max-width:640px}
+.note{font-size:26px;color:#918AA3;line-height:1.5}
+.legend{display:flex;gap:26px;margin-top:24px;font-size:19px;color:#918AA3}
+.legend .sw{display:inline-block;width:20px;height:20px;border:1px solid #443C52;background:#1A1723;margin-right:8px;vertical-align:-3px}
+.legend .sw.on{border-color:#E85D7A;background:#E85D7A}
+/* flow */
+.flowtabs{display:flex;gap:14px;margin-top:36px}
+.ftab{border:1px solid #2C2839;padding:12px 20px;font-size:21px;color:#918AA3}
+.ftab.on{border-color:var(--tone);color:var(--tone);background:rgba(18,17,26,.85)}
+.flowviz{margin-top:34px;border:1px solid #2C2839;background:rgba(18,17,26,.6);padding:26px 30px}
+.fv-row{display:flex;align-items:center;gap:20px;margin:10px 0}
+.fv-lab{font-family:Bahnschrift,monospace;font-size:20px;color:#918AA3;width:28px}
+.fv-track{flex:1;height:26px;border:1px solid #2C2839;position:relative;overflow:hidden}
+.fv-array{display:grid;grid-template-columns:repeat(16,1fr);gap:6px;margin:16px 0}
+.fv-mac{height:26px;border:1px solid #443C52;background:#1A1723}
+.fv-mac.on{background:#E85D7A;border-color:#E85D7A;box-shadow:0 0 10px color-mix(in srgb,#E85D7A 60%,transparent)}
+/* pyramid */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:50px}
+.pyr{width:var(--w);border:1px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);padding:22px 30px;text-align:center;font-size:25px}
+/* flow5 */
+.flow5{display:flex;align-items:center;gap:18px;margin-top:54px;flex-wrap:wrap}
+.f5{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:26px 30px;min-width:190px;text-align:center;opacity:0}
+.f5n{font-family:Bahnschrift,monospace;font-size:32px;color:#E85D7A}
+.f5t{margin-top:10px;font-size:24px}
+.f5a{color:#E85D7A;font-size:30px;font-family:Bahnschrift,monospace}
+/* pipeline */
+.pipetrack{display:flex;align-items:center;margin-top:56px;max-width:1560px}
+.pnode{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:22px 22px;text-align:center;min-width:165px;opacity:.4}
+.pnode.on{opacity:1;border-color:var(--tone)}
+.pn{font-family:Bahnschrift,monospace;font-size:28px;color:var(--tone)}
+.pt{margin-top:8px;font-size:20px;line-height:1.3}
+.plink{width:26px;height:2px;background:#2C2839;position:relative;flex:0 0 auto}
+.plink i{position:absolute;left:0;top:-3px;width:8px;height:8px;border-radius:50%;background:#E85D7A}
+/* metrics */
+.mgrid2{display:flex;gap:28px;margin-top:56px}
+.mg{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:34px 38px;min-width:290px;text-align:center;opacity:0}
+.mgt{font-size:29px}
+.mgs{margin-top:10px;font-size:20px;color:#918AA3}
+.mgv{margin-top:20px;font-family:Bahnschrift,monospace;font-size:50px}
+/* trio */
+.trio{display:flex;gap:28px;margin-top:56px}
+.tc{border:1px solid #2C2839;background:rgba(18,17,26,.85);padding:32px 30px;min-width:290px;text-align:center;opacity:0}
+.tcn{font-family:Bahnschrift,monospace;font-size:44px}
+.tct{margin-top:12px;font-size:25px;line-height:1.4}
+/* summary */
+.sumrule{width:0;height:3px;background:#E85D7A;margin:34px 0}
+.caption{position:absolute;left:0;right:0;bottom:36px;text-align:center;z-index:40;font-size:26px;color:#DCD5E8;text-shadow:0 2px 14px rgba(0,0,0,.9);max-width:1700px;margin:0 auto;padding:0 90px;line-height:1.4}
+</style></head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="110.12" data-width="1920" data-height="1080">
+  <div class="bg-grid" data-layout-ignore></div>
+  <div class="bg-glow" data-layout-ignore></div>
+  <div class="bg-dots" data-layout-ignore></div>
+  <div class="chrome">
+    <div class="brand"><span class="brand-dot"></span>NPU LAB · L3-01 · 实战部署</div>
+    <div class="chapter" id="chapter">01 / 12 · 实战部署</div>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+  <section class="scene" id="sc-0"><div class="hero" id="v0-hero"><div class="kicker" id="v0-kick">L3-01 · 实战部署</div><h1 class="h big" id="v0-h">部署链路</h1><div class="s" id="v0-s">ONNX 到 .rknn 的五步流水线</div>
+        <div class="chips" id="v0-chips"><span class="chip" data-i="0">ONNX</span><span class="chip" data-i="1">Toolkit2</span><span class="chip" data-i="2">W4A16</span><span class="chip" data-i="3">仿真</span></div></div>
+    <div class="caption" id="cap-0">这一集进入实战。目标是把一个模型转换、板端跑起来。</div></section>
+<section class="scene" id="sc-1"><div class="hero" id="v1-hero"><div class="kicker" id="v1-kick">L3-01 · 实战部署</div><h1 class="h" id="v1-h">五步流水线</h1><div class="s" id="v1-s">背下来</div>
+        <div class="flow5" id="v1-f5">
+          <div class="f5" data-i="0"><div class="f5n">1</div><div class="f5t">训练模型</div></div><div class="f5a">→</div>
+          <div class="f5" data-i="1"><div class="f5n">2</div><div class="f5t">导出 ONNX</div></div><div class="f5a">→</div>
+          <div class="f5" data-i="2"><div class="f5n">3</div><div class="f5t">转换成 .rknn</div></div><div class="f5a">→</div>
+          <div class="f5" data-i="3"><div class="f5n">4</div><div class="f5t">推到板子</div></div><div class="f5a">→</div>
+          <div class="f5" data-i="4"><div class="f5n">5</div><div class="f5t">板端加载推理</div></div></div></div>
+    <div class="caption" id="cap-1">先说部署的五个步骤。训练模型，导出 ONNX，转换成 RKNN，推到板子，板端加载推理。</div></section>
+<section class="scene" id="sc-2"><div class="hero" id="v2-hero"><div class="kicker" id="v2-kick">L3-01 · 实战部署</div><h1 class="h" id="v2-h">为什么要过 ONNX？</h1><div class="s" id="v2-s">训练框架太多，厂商不想一家家适配</div>
+        <ul class="blist big" id="v2-items" style="--tone:#5BBF9A"><li data-i="0">ONNX = 模型界的 ELF</li><li data-i="1">解耦训练框架和芯片</li></ul></div>
+    <div class="caption" id="cap-2">为什么要中间过一层 ONNX？因为训练框架太多，芯片厂商不想一家一家适配。ONNX 是大家公认的中间格式。</div></section>
+<section class="scene" id="sc-3"><div class="hero" id="v3-hero"><div class="kicker" id="v3-kick">L3-01 · 实战部署</div><h1 class="h" id="v3-h">为什么 .rknn 不能跨芯片？</h1><div class="s" id="v3-s">它是针对具体芯片编译出来的</div>
+        <ul class="blist big" id="v3-items" style="--tone:#E85D7A"><li data-i="0">绑定算子清单</li><li data-i="1">绑定数据排布</li><li data-i="2">绑定量化方案</li></ul></div>
+    <div class="caption" id="cap-3">为什么 RKNN 不能跨芯片？因为它是针对具体芯片编译出来的。里面锁定了算子清单、数据排布、量化方案。</div></section>
+<section class="scene" id="sc-4"><div class="hero" id="v4-hero"><div class="kicker" id="v4-kick">L3-01 · 实战部署</div><h1 class="h" id="v4-h">在电脑上装工具链</h1><div class="s" id="v4-s">官方只有 Linux 的包</div>
+        <div class="codebox tall" id="v4-cb">
+          <div class="cl" data-i="0"><span class="ln">1</span># Windows 上走 WSL</div><div class="cl" data-i="1"><span class="ln">2</span>python3 -m venv venv &amp;&amp; source venv/bin/activate</div><div class="cl" data-i="2"><span class="ln">3</span>pip install rknn-toolkit2==2.3.2</div>
+        </div>
+        <div class="eq" id="v4-note">Windows 官方没有 wheel</div></div>
+    <div class="caption" id="cap-4">在电脑上装工具链。官方只有 Linux 的包，所以 Windows 上要走 WSL。</div></section>
+<section class="scene" id="sc-5"><div class="hero" id="v5-hero"><div class="kicker" id="v5-kick">L3-01 · 实战部署</div><h1 class="h" id="v5-h">第 1 步：config</h1><div class="s" id="v5-s">指定目标芯片和预处理参数</div>
+        <div class="codebox tall" id="v5-cb">
+          <div class="cl" data-i="0"><span class="ln">1</span>rknn.config(mean_values=[[123.675,116.28,103.53]],</div><div class="cl" data-i="1"><span class="ln">2</span>            std_values=[[58.395,57.12,57.375]],</div><div class="cl" data-i="2"><span class="ln">3</span>            target_platform='rk3576')</div>
+        </div>
+        <div class="eq" id="v5-note">均值方差必须和训练时一致</div></div>
+    <div class="caption" id="cap-5">这一步配置目标芯片和输入归一化参数。这里的均值方差必须和训练时一致，否则精度会掉。</div></section>
+<section class="scene" id="sc-6"><div class="hero" id="v6-hero"><div class="kicker" id="v6-kick">L3-01 · 实战部署</div><h1 class="h" id="v6-h">第 2、3 步：load + build</h1><div class="s" id="v6-s">build 里发生量化</div>
+        <div class="codebox tall" id="v6-cb">
+          <div class="cl" data-i="0"><span class="ln">1</span>rknn.load_onnx('yolov5s.onnx')</div><div class="cl" data-i="1"><span class="ln">2</span>rknn.build(do_quantization=True, dataset='./dataset.txt')</div>
+        </div>
+        <div class="eq" id="v6-note">校准集决定每层 scale</div></div>
+    <div class="caption" id="cap-6">第二步读入 ONNX 模型。</div></section>
+<section class="scene" id="sc-7"><div class="hero" id="v7-hero"><div class="kicker" id="v7-kick">L3-01 · 实战部署</div><h1 class="h" id="v7-h">第 4、5 步：export + 仿真</h1><div class="s" id="v7-s">不碰板子先验证正确性</div>
+        <div class="codebox tall" id="v7-cb">
+          <div class="cl" data-i="0"><span class="ln">1</span>rknn.export_rknn('yolov5s_rk3576.rknn')</div><div class="cl" data-i="1"><span class="ln">2</span>rknn.init_runtime()  # PC 仿真</div>
+        </div>
+        <div class="eq" id="v7-note">性能只能连真机测</div></div>
+    <div class="caption" id="cap-7">第三步构建。这一步会做量化，工具链会读取你的校准集，统计每层范围，定出每层的缩放比例。</div></section>
+<section class="scene" id="sc-8"><div class="hero" id="v8-hero"><div class="kicker" id="v8-kick">L3-01 · 实战部署</div><h1 class="h" id="v8-h">工具链家族要分清</h1><div class="s" id="v8-s">跑在哪、干什么</div>
+          <div class="split">
+            <ul class="blist big" id="v8-items" style="--tone:#E85D7A"><li data-i="0">Toolkit2：PC，转换/量化/仿真</li><li data-i="1">lite2：板端 Python</li><li data-i="2">librknnrt：板端 C 运行时</li></ul>
+            <div class="metric" id="v8-metric"><div class="ml">FAMILY</div><div class="mv" id="v8-mv">3</div><div class="mu">pieces</div></div>
+          </div></div>
+    <div class="caption" id="cap-8">第四步导出，得到 RKNN 文件。</div></section>
+<section class="scene" id="sc-9"><div class="hero" id="v9-hero"><div class="kicker" id="v9-kick">L3-01 · 实战部署</div><div class="kicker warnk" style="color:#E85D7A">L3-01 · 提醒</div><h1 class="h" id="v9-h">最大坑：版本</h1><div class="s" id="v9-s">Toolkit2 和 librknnrt 建议同版本</div>
+          <div class="warnpanel" id="v9-wp" style="--tone:#E85D7A"><ul><li data-i="0">驱动、运行时、工具链要配套</li><li data-i="1">看到老教程先分辨 v1 / v2</li></ul></div></div>
+    <div class="caption" id="cap-9">第五步可以在电脑上先仿真。不碰板子就能验证转换是否正确。</div></section>
+<section class="scene" id="sc-10"><div class="hero" id="v10-hero"><div class="kicker" id="v10-kick">L3-01 · 实战部署</div><h1 class="h" id="v10-h">W4A16：RK3576 的独门</h1><div class="s" id="v10-s">权重 4bit + 激活 FP16</div>
+          <div class="split">
+            <ul class="blist big" id="v10-items" style="--tone:#E85D7A"><li data-i="0">仅 RK3576 / RV1126B</li><li data-i="1">LLM 场景的主力</li></ul>
+            <div class="metric" id="v10-metric"><div class="ml">W4A16</div><div class="mv" id="v10-mv">3576</div><div class="mu">only</div></div>
+          </div></div>
+    <div class="caption" id="cap-10">工具链家族要分清。Toolkit2 在电脑上转换和仿真。lite2 是板端的 Python 接口。librknnrt 是板端的 C 语言运行时。</div></section>
+<section class="scene" id="sc-11"><div class="hero" id="v11-hero"><div class="kicker" id="v11-kick">L3-01 · 实战部署</div><div class="h big" id="v11-h">本集记住这句话</div>
+        <div class="s" id="v11-s">转换的正确性，可以先在电脑上验证</div>
+        <div class="sumrule" id="v11-sr"></div>
+        <ul class="blist" id="v11-items" style="--tone:#E85D7A"><li data-i="0">下一集：RK3576 全链路实操</li></ul></div>
+    <div class="caption" id="cap-11">这一集要记住的是：转换的正确性，可以先在电脑上验证，再推到板子。</div></section>
+  <div id="audio" style="position:absolute;width:0;height:0;overflow:hidden;opacity:0"><audio id="master-audio" data-start="0" data-duration="110.12" data-track-index="1" src="audio/mix.wav" data-volume="1"></audio></div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const SCENES = [{"k":"title","anim":"","state":null,"codeLen":0,"chipLen":4,"itemsLen":0},{"k":"flow5","anim":"flow5march","state":null,"codeLen":0,"chipLen":0,"itemsLen":5},{"k":"why","anim":"summarymark","state":null,"codeLen":0,"chipLen":0,"itemsLen":2},{"k":"why","anim":"warnpulse","state":null,"codeLen":0,"chipLen":0,"itemsLen":3},{"k":"code","anim":"typed","state":null,"codeLen":3,"chipLen":0,"itemsLen":0},{"k":"code","anim":"typed","state":null,"codeLen":3,"chipLen":0,"itemsLen":0},{"k":"code","anim":"typed","state":null,"codeLen":2,"chipLen":0,"itemsLen":0},{"k":"code","anim":"typed","state":null,"codeLen":2,"chipLen":0,"itemsLen":0},{"k":"bullets","anim":"summarymark","state":null,"codeLen":0,"chipLen":0,"itemsLen":3},{"k":"warn","anim":"warnpulse","state":null,"codeLen":0,"chipLen":0,"itemsLen":2},{"k":"bullets","anim":"summarymark","state":null,"codeLen":0,"chipLen":0,"itemsLen":2},{"k":"summary","anim":"summarymark","state":null,"codeLen":0,"chipLen":0,"itemsLen":1}];
+    const TIMELINE = [{"id":1,"file":"audio/n01.mp3","start":0,"dur":6.67},{"id":2,"file":"audio/n02.mp3","start":7.07,"dur":10.54},{"id":3,"file":"audio/n03.mp3","start":18.01,"dur":12.62},{"id":4,"file":"audio/n04.mp3","start":31.03,"dur":11.62},{"id":5,"file":"audio/n05.mp3","start":43.05,"dur":8.74},{"id":6,"file":"audio/n06.mp3","start":52.18,"dur":9.7},{"id":7,"file":"audio/n07.mp3","start":62.28,"dur":3.58},{"id":8,"file":"audio/n08.mp3","start":66.26,"dur":10.22},{"id":9,"file":"audio/n09.mp3","start":76.88,"dur":4.32},{"id":10,"file":"audio/n10.mp3","start":81.6,"dur":7.27},{"id":11,"file":"audio/n11.mp3","start":89.27,"dur":13.15},{"id":12,"file":"audio/n12.mp3","start":102.82,"dur":7.3}];
+    // Motion engine: real diagrams, staggered entrances, and per-kind animation.
+(function () {
+  const tl = gsap.timeline({ paused: true });
+  const rootEl = document.getElementById('root');
+  const D = rootEl ? (parseFloat(rootEl.getAttribute('data-duration')) || 60) : 60;
+
+  gsap.set('.scene', { opacity: 0, pointerEvents: 'none' });
+  gsap.set('.hero > *', { opacity: 0 });
+  const sceneEls = document.querySelectorAll('.scene');
+
+  // compute scene start times
+  const starts = [];
+  for (let i = 0; i < sceneEls.length; i++) starts.push(i === 0 ? 0 : TIMELINE[i].start);
+
+  function accent() {
+    const c = getComputedStyle(document.body).getPropertyValue('--accent') || '#D4895A';
+    return c.trim();
+  }
+
+  // ---- per-scene entrance (staggered, purposeful) ----
+  function entrance(i, t0) {
+    const sc = document.getElementById('sc-' + i);
+    const kids = Array.from(sc.querySelector('.hero').children);
+    tl.to(sc, { opacity: 1, duration: 0.4 }, t0);
+    kids.forEach((k, j) => {
+      tl.fromTo(k, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' }, t0 + 0.06 * j);
+    });
+    const cap = document.getElementById('cap-' + i);
+    if (cap) tl.fromTo(cap, { opacity: 0 }, { opacity: 1, duration: 0.4 }, t0 + 0.3);
+  }
+
+  function exit(i, t) {
+    if (i === sceneEls.length - 1) return;
+    tl.to('#sc-' + i, { opacity: 0, duration: 0.35 }, t);
+  }
+
+  // ---- animation behaviours by directive ----
+  function animateScene(i, t0, spec) {
+    const sel = (s) => `#sc-${i} ${s}`;
+    const dur = (i < TIMELINE.length ? TIMELINE[i].dur : 4) - 0.6;
+    const A = spec.anim || '';
+
+    switch (A) {
+      case 'bitflip': {
+        const cells = document.querySelectorAll(sel('.bitcell'));
+        tl.fromTo(cells, { opacity: 0, scale: 0.8, y: -14 }, { opacity: 1, scale: 1, y: 0, duration: 0.3, stagger: 0.055 }, t0 + 0.5);
+        const row = document.querySelector(sel('.bitrow'));
+        const bits = '00001101';
+        const obj = { n: 0 };
+        tl.to(obj, {
+          n: 8, duration: Math.min(2.2, dur), ease: 'none',
+          onUpdate() {
+            const k = Math.floor(obj.n);
+            row.textContent = bits.slice(0, k);
+            cells.forEach((c, idx) => {
+              c.textContent = idx < k ? bits[idx] : '';
+              c.style.color = idx < k && bits[idx] === '1' ? accent() : (idx < k ? '#EDE8F5' : '#918AA3');
+            });
+          }
+        }, t0 + 0.9);
+        break;
+      }
+      case 'binarysign': {
+        const neg = document.querySelectorAll(sel('#v' + i + '-neg .b'));
+        const pos = document.querySelectorAll(sel('#v' + i + '-pos .b'));
+        tl.fromTo(neg, { opacity: 0, x: -22 }, { opacity: 1, x: 0, duration: 0.26, stagger: 0.05 }, t0 + 0.5);
+        tl.fromTo(pos, { opacity: 0, x: 22 }, { opacity: 1, x: 0, duration: 0.26, stagger: 0.05 }, t0 + 1.4);
+        break;
+      }
+      case 'gridquant': case 'griddequant': {
+        const rows = document.querySelectorAll(sel('.qrow'));
+        tl.fromTo(rows, { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.32, stagger: 0.28 }, t0 + 0.5);
+        const bars = document.querySelectorAll(sel('.qbar i'));
+        tl.fromTo(bars, { width: '0%' }, { width: (idx, el) => el.style.getPropertyValue('--w') || '60%', duration: 0.9, stagger: 0.28 }, t0 + 0.7);
+        break;
+      }
+      case 'macshrink': {
+        const fp = document.querySelector(sel('.mbox[data-k="fp"] i'));
+        const it = document.querySelector(sel('.mbox[data-k="int"] i'));
+        tl.fromTo(fp, { width: '0%' }, { width: '100%', duration: 0.9 }, t0 + 0.5);
+        tl.fromTo(it, { width: '0%' }, { width: '25%', duration: 0.9 }, t0 + 1.5);
+        tl.fromTo(sel('.mbox[data-k="int"]'), { borderColor: '#2C2839' }, { borderColor: accent(), duration: 0.6 }, t0 + 2.2);
+        break;
+      }
+      case 'byteslide': {
+        const fp = document.querySelector(sel('.mbox[data-k="fp"] i'));
+        const it = document.querySelector(sel('.mbox[data-k="int"] i'));
+        tl.fromTo(fp, { width: '0%' }, { width: '100%', duration: 0.6 }, t0 + 0.5);
+        tl.fromTo(it, { width: '0%' }, { width: '25%', duration: 0.6 }, t0 + 1.1);
+        tl.to(sel('.mbox[data-k="fp"]'), { x: -14, duration: 0.18, repeat: 3, yoyo: true }, t0 + 2.0);
+        break;
+      }
+      case 'modelshrink': {
+        const fp = document.querySelector(sel('.mbox[data-k="fp"] i'));
+        const it = document.querySelector(sel('.mbox[data-k="int"] i'));
+        tl.fromTo(fp, { width: '0%' }, { width: '100%', duration: 0.5 }, t0 + 0.5);
+        tl.fromTo(it, { width: '0%' }, { width: '25%', duration: 0.5 }, t0 + 1.0);
+        break;
+      }
+      case 'growstack': {
+        const rows = document.querySelectorAll(sel('.lrow'));
+        tl.fromTo(rows, { opacity: 0, width: 0 }, { opacity: 1, width: (idx, el) => el.style.getPropertyValue('--w') || '80%', duration: 0.55, stagger: 0.32 }, t0 + 0.5);
+        break;
+      }
+      case 'tensorgrid': {
+        const cells = document.querySelectorAll(sel('.tgrid span'));
+        tl.fromTo(cells, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.22, stagger: 0.035 }, t0 + 0.5);
+        tl.to(cells, { backgroundColor: accent(), duration: 0.12, stagger: { each: 0.02, from: 'random' }, yoyo: true, repeat: 3 }, t0 + 1.6);
+        break;
+      }
+      case 'rowcoltrace': {
+        const rows = document.querySelectorAll(sel('.mgrid:not(.col) .mc2'));
+        const cols = document.querySelectorAll(sel('.mgrid.col .mc2'));
+        tl.fromTo(rows, { opacity: 0 }, { opacity: 1, duration: 0.24, stagger: 0.12 }, t0 + 0.5);
+        tl.fromTo(cols, { opacity: 0 }, { opacity: 1, duration: 0.24, stagger: 0.12 }, t0 + 0.8);
+        tl.fromTo(sel('.mop'), { opacity: 0 }, { opacity: 1, duration: 0.24 }, t0 + 1.0);
+        const res = document.querySelector(sel('.mres'));
+        const vals = ['19', '43'];
+        const o = { i: 0 };
+        tl.to(o, {
+          i: 2, duration: 0.9, ease: 'none',
+          onUpdate() {
+            const k = Math.floor(o.i);
+            if (res.children.length !== k) {
+              res.innerHTML = '';
+              for (let j = 0; j < k; j++) {
+                const d = document.createElement('div');
+                d.className = 'rv';
+                d.textContent = vals[j];
+                res.appendChild(d);
+              }
+            }
+          }
+        }, t0 + 1.5);
+        break;
+      }
+      case 'dimcheck': {
+        tl.fromTo(sel('.dm[data-k="A"]'), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3 }, t0 + 0.5);
+        tl.fromTo(sel('.dm[data-k="B"]'), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3 }, t0 + 0.75);
+        tl.to(sel('.dmop'), { opacity: 1, duration: 0.2 }, t0 + 1.0);
+        tl.fromTo(sel('.dm.res'), { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.34 }, t0 + 1.3);
+        break;
+      }
+      case 'dotanimate': {
+        tl.fromTo(sel('.dm[data-k="A"]'), { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3 }, t0 + 0.5);
+        tl.fromTo(sel('.dm[data-k="B"]'), { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3 }, t0 + 0.72);
+        tl.to(sel('.dmop'), { opacity: 1, duration: 0.2 }, t0 + 0.95);
+        tl.fromTo(sel('.dm.res'), { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.34 }, t0 + 1.2);
+        break;
+      }
+      case 'parallelrows': case 'macspawn': case 'blocksnap': {
+        const macs = document.querySelectorAll(sel('.mac'));
+        if (macs.length) {
+          tl.fromTo(macs, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.2, stagger: 0.008 }, t0 + 0.5);
+          const rows = Math.max(1, Math.floor(dur - 1));
+          for (let r = 0; r < rows; r++) {
+            const st = t0 + 1.4 + r * 0.34;
+            tl.to(macs, { backgroundColor: accent(), borderColor: accent(), duration: 0.1, stagger: { each: 0.006, from: 'start' } }, st);
+            tl.to(macs, { backgroundColor: '#1A1723', borderColor: '#443C52', duration: 0.14, stagger: { each: 0.006, from: 'end' } }, st + 0.18);
+          }
+        } else {
+          const items = document.querySelectorAll(sel('.blist li'));
+          tl.fromTo(items, { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.18 }, t0 + 0.5);
+        }
+        break;
+      }
+      case 'datastream': case 'systolicpump': {
+        const macs = document.querySelectorAll(sel('.fv-mac'));
+        const tracks = document.querySelectorAll(sel('.fv-track'));
+        tl.fromTo(tracks, { opacity: 0 }, { opacity: 1, duration: 0.24 }, t0 + 0.4);
+        const sweep = Math.min(3.0, dur - 1.0);
+        const steps = Math.max(1, Math.round(sweep / 0.24));
+        for (let k = 0; k < steps; k++) {
+          const st = t0 + 0.9 + k * 0.24;
+          const from = A === 'systolicpump' ? 'start' : (k % 2 === 0 ? 'start' : 'end');
+          tl.to(macs, { backgroundColor: accent(), borderColor: accent(), duration: 0.1, stagger: { each: 0.02, from } }, st);
+          tl.to(macs, { backgroundColor: '#1A1723', borderColor: '#443C52', duration: 0.12, stagger: { each: 0.02, from } }, st + 0.13);
+        }
+        break;
+      }
+      case 'warnpulse': {
+        const wp = document.querySelector(sel('.warnpanel'));
+        const items = document.querySelectorAll(sel('.warnpanel li'));
+        if (wp) {
+          tl.fromTo(wp, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.3 }, t0 + 0.5);
+          const g = { o: 1 };
+          const pulseCount = Math.max(2, Math.min(6, Math.round(dur / 1.2)));
+          tl.to(g, { o: 0.55, duration: 0.5, yoyo: true, repeat: pulseCount * 2 - 1, onUpdate() { wp.style.boxShadow = `0 0 ${40 * g.o}px color-mix(in srgb, var(--tone) 30%, transparent)`; } }, t0 + 1.0);
+        } else {
+          tl.fromTo(items, { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.18 }, t0 + 0.5);
+        }
+        break;
+      }
+      case 'typed': {
+        const lines = document.querySelectorAll(sel('.codebox .cl'));
+        tl.fromTo(lines, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.3 }, t0 + 0.5);
+        const caret = document.createElement('span');
+        caret.textContent = '▍';
+        caret.style.color = accent();
+        caret.style.marginLeft = '10px';
+        const box = document.querySelector(sel('.codebox'));
+        if (box && lines.length) box.appendChild(caret);
+        const blinkCount = Math.max(4, Math.min(14, Math.round(dur * 2)));
+        tl.to(caret, { opacity: 0, duration: 0.28, yoyo: true, repeat: blinkCount }, t0 + 0.9);
+        break;
+      }
+      case 'summarymark': {
+        const rule = document.querySelector(sel('.sumrule'));
+        const items = document.querySelectorAll(sel('.blist li'));
+        if (rule) tl.fromTo(rule, { width: 0 }, { width: '240px', duration: 0.5 }, t0 + 0.5);
+        tl.fromTo(items, { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.2 }, t0 + 0.8);
+        break;
+      }
+      case 'countup': case 'barfill': case 'pydrift': case 'flow5march': case 'metricsfloat': default: {
+        const generic = document.querySelectorAll(sel('.hero .blist li, .hero .f5, .hero .mg, .hero .pyr'));
+        if (generic.length) tl.fromTo(generic, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.36, stagger: 0.14 }, t0 + 0.5);
+        break;
+      }
+    }
+  }
+
+  // ---- compose ----
+  for (let i = 0; i < sceneEls.length; i++) {
+    const t0 = starts[i];
+    entrance(i, t0);
+    animateScene(i, t0, SCENES[i]);
+    if (i < sceneEls.length - 1) {
+      const tExit = Math.min((i + 1 < TIMELINE.length ? TIMELINE[i + 1].start : D) - 0.35, D - 0.1);
+      exit(i, tExit);
+    }
+  }
+
+  // chrome
+  const chapterEl = document.getElementById('chapter');
+  const total = sceneEls.length;
+  for (let i = 0; i < total; i++) {
+    const label = `${String(i + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')} · ${SCENES[i].k === 'title' ? '开场' : SCENES[i].k === 'summary' ? '小结' : '讲解'}`;
+    tl.call(() => { chapterEl.textContent = label; }, null, starts[i]);
+  }
+  tl.to('#progress-fill', { width: '100%', duration: D, ease: 'none' }, 0);
+  tl.to('.bg-glow', { scale: 1.07, opacity: 0.8, duration: 24, yoyo: true, repeat: Math.max(1, Math.ceil(D / 24) - 1) }, 0);
+  tl.to('.bg-grid', { y: -16, duration: 40, yoyo: true, repeat: Math.max(1, Math.ceil(D / 40) - 1) }, 0);
+  tl.to('.brand-dot', { scale: 1.3, duration: 2.4, yoyo: true, repeat: Math.max(1, Math.ceil(D / 2.4) - 1) }, 0);
+
+  window.__timelines['main'] = tl;
+  tl.seek(0);
+})();
+
+  </script>
+</div></body></html>

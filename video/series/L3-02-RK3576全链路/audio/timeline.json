@@ -1,0 +1,92 @@
+﻿[
+    {
+        "id":  1,
+        "file":  "audio/n01.mp3",
+        "start":  0,
+        "dur":  7.94
+    },
+    {
+        "id":  2,
+        "file":  "audio/n02.mp3",
+        "start":  8.34,
+        "dur":  9.86
+    },
+    {
+        "id":  3,
+        "file":  "audio/n03.mp3",
+        "start":  18.61,
+        "dur":  3.72
+    },
+    {
+        "id":  4,
+        "file":  "audio/n04.mp3",
+        "start":  22.73,
+        "dur":  8.66
+    },
+    {
+        "id":  5,
+        "file":  "audio/n05.mp3",
+        "start":  31.79,
+        "dur":  8.88
+    },
+    {
+        "id":  6,
+        "file":  "audio/n06.mp3",
+        "start":  41.07,
+        "dur":  8.9
+    },
+    {
+        "id":  7,
+        "file":  "audio/n07.mp3",
+        "start":  50.38,
+        "dur":  7.75
+    },
+    {
+        "id":  8,
+        "file":  "audio/n08.mp3",
+        "start":  58.53,
+        "dur":  6.58
+    },
+    {
+        "id":  9,
+        "file":  "audio/n09.mp3",
+        "start":  65.5,
+        "dur":  5.23
+    },
+    {
+        "id":  10,
+        "file":  "audio/n10.mp3",
+        "start":  71.14,
+        "dur":  6.24
+    },
+    {
+        "id":  11,
+        "file":  "audio/n11.mp3",
+        "start":  77.78,
+        "dur":  4.87
+    },
+    {
+        "id":  12,
+        "file":  "audio/n12.mp3",
+        "start":  83.05,
+        "dur":  8.14
+    },
+    {
+        "id":  13,
+        "file":  "audio/n13.mp3",
+        "start":  91.58,
+        "dur":  9.55
+    },
+    {
+        "id":  14,
+        "file":  "audio/n14.mp3",
+        "start":  101.54,
+        "dur":  12.26
+    },
+    {
+        "id":  15,
+        "file":  "audio/n15.mp3",
+        "start":  114.2,
+        "dur":  5.93
+    }
+]

@@ -1,0 +1,14 @@
+{
+  "id": "L2-01-MAC阵列与数据流",
+  "name": "L2-01-MAC阵列与数据流",
+  "level": "L2",
+  "duration": 117.71,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 21,
+    "bpm": 88,
+    "key": 52,
+    "intensity": 0.85
+  },
+  "createdAt": "2026-10-11T15:36:19.718Z"
+}

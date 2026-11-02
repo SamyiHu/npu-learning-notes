@@ -38,7 +38,7 @@
 /dev/rknpu          NPU 设备节点（驱动注册的）
 /dev/dri/renderD128 NPU 的 DRM 节点
 /dev/video*         摄像头
-/proc/cpuinfo       CPU 信息；/proc/rknpu/version ← NPU 驱动版本
+/proc/cpuinfo       CPU 信息；NPU 驱动版本优先看 /sys/kernel/debug/rknpu/version（不同 BSP 路径可能不同）
 /sys/kernel/debug/  调试信息（如 rknpu/load 占用率）
 ```
 
@@ -104,7 +104,7 @@ adb push yolov5s.rknn /userdata/          # USB
 chmod +x rknn_yolov5_demo           # 给可执行位（第一次必做）
 ./rknn_yolov5_demo model.rknn img.jpg
 # ── NPU 体检 ─────────────────────────────
-cat /proc/rknpu/version            # 驱动版本（连板调试第一步）
+cat /sys/kernel/debug/rknpu/version 2>/dev/null || cat /proc/rknpu/version   # 驱动版本（连板调试第一步）
 cat /sys/kernel/debug/rknpu/load   # NPU 占用率
 dmesg | grep -i rknpu              # 驱动日志
 # ── 排错辅助 ─────────────────────────────
@@ -147,3 +147,35 @@ df -h ; free -h                    # 磁盘/内存余量（模型+运行时吃�
 - [ ] 不看清单能写出：上板→传文件→给执行位→跑→看 NPU 占用率 的完整命令序列
 - [ ] 遇到"shared library not found"知道三板斧（ldd / LD_LIBRARY_PATH / ldconfig）
 - [ ] 理解动态库运行时查找机制与交叉编译架构匹配问题
+
+---
+<!-- BEGINNER_EXERCISES -->
+## 小白练习与答案 · Linux 生存包
+> 每题都要求写出过程或排查顺序；不要只写“懂了”。
+
+**计算 1**：一个程序执行 `chmod +x demo` 后，如何运行？
+
+<details>
+<summary>答案</summary>
+
+`./demo`。
+
+</details>
+
+**解释 2**：为什么 debugfs 命令经常需要 sudo？
+
+<details>
+<summary>答案</summary>
+
+debugfs 暴露内核调试信息，权限通常比普通文件更严格。
+
+</details>
+
+**调试 3**：`permission denied` 与 `command not found` 的排查重点有何不同？
+
+<details>
+<summary>答案</summary>
+
+前者看权限/文件系统；后者看安装、PATH、命令拼写和架构。
+
+</details>

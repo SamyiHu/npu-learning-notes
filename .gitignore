@@ -1,2 +1,22 @@
+
 # Claude Code 本地配置
 .claude/
+
+# 视频构建缓存与中间产物（成片 final.mp4 体积较大，按需决定是否入库）
+video/**/work/
+video/**/node_modules/
+video/**/preview/
+video/**/_qa/
+video/**/draft.mp4
+
+# 视频媒体文件不入库（可再生：bgm/mix 由音频管线合成，mp4 由 hyperframes 渲染）
+# 文本源（narration.txt / subtitles.srt|vtt / timeline.json / lecture-notes.md）仍然入库
+video/**/audio/*.wav
+video/**/audio/*.mp3
+video/**/final.mp4
+video/**/*.mp4
+
+# TTS 试音等临时产物
+video/**/_tts_test/
+video/**/*.wav
+video/**/*.mp3

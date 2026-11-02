@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|
 | **RK3588** | 6 TOPS | **3 核可分核** | INT4/8/16, FP16, BF16, TF32 | 4×A76@2.4G + 4×A55 | LPDDR4/4X/5, 64bit, 32GB | 8nm | AIoT 旗舰 |
 | **RK3588S** | 6 TOPS | 3 核 | 同上 | 同 3588 | LPDDR4/4X/5, **32bit**, ≤32GB | 8nm | 3588 精简版（接口少） |
-| **RK3576** | 6 TOPS* | **2（官方确认：可独立/协同）** | INT4/8/16, FP16, BF16, TF32 | 4×A72@2.2G + 4×A53 | LPDDR4/4X/5, 32bit, 16GB | 8nm | 次旗舰 AIoT（*稀疏口径，实测约为 3588 的 55~70%） |
+| **RK3576** | 6 TOPS* | **2（官方确认：可独立/协同）** | INT4/8/16, FP16, BF16, TF32 | 4×A72@2.2G + 4×A53 | LPDDR4/4X/5, 32bit, 16GB | 8nm | 次旗舰 AIoT（*稀疏口径；单核吞吐与 3588 互有胜负，3588 强在三核/CPU/64bit 内存） |
 | **RK3568** | 1 TOPS | 1 | INT8/INT16 | 4×A55@2.0G | LPDDR4X 等, 32bit, 8GB, ECC | 22nm | 工业主力 |
 | **RK3566** | 1 TOPS | 1 | INT8/INT16 | 4×A55@1.8G | LPDDR4X 等, 32bit | 22nm | 平板/智能屏 |
 | **RK3562** | 1 TOPS | 1 | INT8（待确认） | 4×A53@2.0G | LPDDR4X 等, 8GB | 22nm | 入门 AIoT |
@@ -61,8 +61,8 @@
 │    → RK3576（¥399~1700，已按此路线购买）
 │      · 同 6T 标称 + FP16 + 双核分核（core_mask 可用：NPU_CORE_0/1/0_1）
 │      · 独占 W4A16 量化、Flash Attention、稀疏推理——实验素材反而独一份
-│      · 代价：社区资料较 3588 少；实际吞吐约为 3588 的 55~70%（6T 为稀疏口径；
-│        双核 vs 三核 + A72 弱于 A76 + 32bit 内存位宽）
+│      · 代价：社区资料较 3588 少；单核吞吐与 3588 互有胜负，3588 的优势在三核并行、
+│        CPU 和 64bit 内存位宽（6T 为稀疏口径；A72 弱于 A76）
 │
 └─ 只是好奇"白菜价 AI"长什么样
      → Luckfox Pico（RV1106，几十块）
@@ -81,7 +81,7 @@
 
 ## 五、买板前检查清单
 
-- [ ] 板厂提供 Linux（Debian/Ubuntu）固件且**预装 rknpu 驱动**（问客服"内核带不带 NPU 驱动、/proc/rknpu/version 能不能出东西"）
+- [ ] 板厂提供 Linux（Debian/Ubuntu）固件且**预装 rknpu 驱动**（问客服"内核带不带 NPU 驱动、能否查看 /sys/kernel/debug/rknpu/version 或 /proc/rknpu/version"）
 - [ ] 板厂文档里有 RKNN 专页（Orange Pi/Radxa/Firefly/ArmSoM 都有）
 - [ ] 供电和散热：RK3588 满载要 5V/4A+ 和散热片，NPU 长跑发热明显
 - [ ] 网口或稳定 WiFi（联调靠 ssh/adb，比串口舒服）
@@ -94,3 +94,35 @@
 1. PC 装 RKNN-Toolkit2（WSL 即可），把 model zoo 的 YOLO 例子**转换+仿真**跑通
 2. 读 .onnx 结构（netron.app 可视化）对照阶段一的"管道"认知
 3. 手算作业：算 YOLOv5s 每层计算量，估算它在 1 TOPS（3566）和 2 TOPS 单核（3588）上的理论帧率
+
+---
+<!-- BEGINNER_EXERCISES -->
+## 小白练习与答案 · 芯片选型
+> 每题都要求写出过程或排查顺序；不要只写“懂了”。
+
+**计算 1**：RK3588 三核 6 TOPS 与 RK3576 双核 6 TOPS 能直接当成同性能吗？
+
+<details>
+<summary>答案</summary>
+
+不能；标称峰值、稀疏口径、CPU、带宽和实测吞吐都不同。
+
+</details>
+
+**解释 2**：选板时为什么要优先确认软件生态？
+
+<details>
+<summary>答案</summary>
+
+没有匹配的系统、驱动、运行时和文档，硬件规格再高也难以完成实验。
+
+</details>
+
+**调试 3**：板卡资料只写 AI TOPS，还应追问什么？
+
+<details>
+<summary>答案</summary>
+
+INT8/FP16/W4A16 支持、核心数、内存带宽、驱动版本、工具链版本和真实 benchmark 条件。
+
+</details>

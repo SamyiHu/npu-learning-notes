@@ -126,3 +126,35 @@ NPU 验证工程师的价值差就在后两级：会构造"真实 AI 负载 + �
 - [ ] 能指出"摄像头→检测→显示"接力中每一棒是哪个 IP、数据在哪几个环节过 DDR
 - [ ] 能说出 SoC 相对 MCU 的三个认知升级（多主仲裁 / IOMMU / 公共 DDR 预算）
 - [ ] 能解释为什么 NPU 需要电源域独立和 DVFS，以及它对验证意味着什么
+
+---
+<!-- BEGINNER_EXERCISES -->
+## 小白练习与答案 · SoC 地图
+> 每题都要求写出过程或排查顺序；不要只写“懂了”。
+
+**计算 1**：1080p30 NV12 一帧约 3.1MB，30fps 的裸数据带宽约为多少？
+
+<details>
+<summary>答案</summary>
+
+约 93MB/s；RGA 再读写会继续增加。
+
+</details>
+
+**解释 2**：IOMMU 对 NPU 有什么好处？
+
+<details>
+<summary>答案</summary>
+
+把分散物理页映射成设备连续视图，并提供地址隔离。
+
+</details>
+
+**调试 3**：多 IP 并发时 FPS 下降，应如何判断？
+
+<details>
+<summary>答案</summary>
+
+分别测单 IP 与并发，记录 DDR 带宽、CPU/NPU/GPU 负载和优先级/QoS。
+
+</details>

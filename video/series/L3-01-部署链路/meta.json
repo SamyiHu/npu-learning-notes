@@ -1,0 +1,14 @@
+{
+  "id": "L3-01-部署链路",
+  "name": "L3-01-部署链路",
+  "level": "L3",
+  "duration": 110.12,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 31,
+    "bpm": 92,
+    "key": 55,
+    "intensity": 0.9
+  },
+  "createdAt": "2026-10-11T15:36:37.237Z"
+}

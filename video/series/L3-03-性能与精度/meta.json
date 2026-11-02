@@ -1,0 +1,14 @@
+{
+  "id": "L3-03-性能与精度",
+  "name": "L3-03-性能与精度",
+  "level": "L3",
+  "duration": 121.67,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 33,
+    "bpm": 84,
+    "key": 53,
+    "intensity": 0.75
+  },
+  "createdAt": "2026-10-11T15:38:18.732Z"
+}

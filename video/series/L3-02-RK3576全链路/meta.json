@@ -1,0 +1,14 @@
+{
+  "id": "L3-02-RK3576全链路",
+  "name": "L3-02-RK3576全链路",
+  "level": "L3",
+  "duration": 120.13,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 32,
+    "bpm": 96,
+    "key": 57,
+    "intensity": 1
+  },
+  "createdAt": "2026-10-11T15:37:35.148Z"
+}

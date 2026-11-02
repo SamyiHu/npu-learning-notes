@@ -1,0 +1,14 @@
+{
+  "id": "L1-03-卷积池化BN",
+  "name": "L1-03-卷积池化BN",
+  "level": "L1",
+  "duration": 92.75,
+  "voice": "edge-neural",
+  "bgm": {
+    "seed": 13,
+    "bpm": 80,
+    "key": 53,
+    "intensity": 0.6
+  },
+  "createdAt": "2026-10-11T15:36:15.036Z"
+}

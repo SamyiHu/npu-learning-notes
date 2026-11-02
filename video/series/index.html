@@ -1,0 +1,70 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NPU 分级讲解系列</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0B0A12;color:#EDE8F5;font-family:"Segoe UI","Microsoft YaHei",sans-serif;padding:48px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:42px;font-weight:800;letter-spacing:-.02em}
+.lede{margin-top:14px;color:#918AA3;font-size:17px;line-height:1.6}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px}
+.lv{border:1px solid #2C2839;background:#12111A;padding:22px}
+.lv h2{font-size:19px;letter-spacing:.12em}
+.lv p{margin-top:8px;color:#918AA3;font-size:14px}
+.lv .meta{margin-top:14px;font-family:"Cascadia Code",monospace;font-size:13px}
+table{width:100%;border-collapse:collapse;margin-top:36px}
+th{text-align:left;padding:12px 14px;border-bottom:1px solid #2C2839;color:#918AA3;font-size:13px;letter-spacing:.1em}
+td{padding:14px;border-bottom:1px solid #1F1B29;font-size:15px}
+td.num{font-family:"Cascadia Code",monospace;color:#918AA3;width:60px}
+a{color:#D4895A;text-decoration:none}
+a:hover{text-decoration:underline}
+.badge{display:inline-block;padding:3px 10px;font-family:"Cascadia Code",monospace;font-size:11px;border:1px solid}
+.b1{border-color:#5BBF9A;color:#5BBF9A}
+.b2{border-color:#D4895A;color:#D4895A}
+.b3{border-color:#E85D7A;color:#E85D7A}
+.chips{margin-top:28px;display:flex;gap:26px;flex-wrap:wrap;font-size:14px;color:#918AA3}
+.chips b{color:#EDE8F5}
+footer{margin-top:40px;color:#5E5870;font-size:13px}
+</style></head>
+<body><div class="wrap">
+<h1>NPU 分级讲解系列</h1>
+<p class="lede">10 集 · 1920×1080 · Edge 神经语音配音 · 程序化合成配乐 · 逐场景动画讲解 · 逐句字幕</p>
+
+<div class="levels">
+  <div class="lv"><h2 style="color:#5BBF9A">L1 · 零基础</h2><p>数字、张量、卷积，不依赖 AI 前置</p><div class="meta" style="color:#5BBF9A">3 集 · 5.1 min · Xiaoxiao</div></div>
+  <div class="lv"><h2 style="color:#D4895A">L2 · 硬件原理</h2><p>MAC 阵列、存储搬运、量化、RKNPU</p><div class="meta" style="color:#D4895A">4 集 · 7.0 min · Yunxi/Yunyang</div></div>
+  <div class="lv"><h2 style="color:#E85D7A">L3 · 实战部署</h2><p>部署链路、RK3576、性能与精度</p><div class="meta" style="color:#E85D7A">3 集 · 5.9 min · Yunxi/Yunyang</div></div>
+</div>
+
+<table>
+<thead><tr><th>#</th><th>集</th><th>时长</th></tr></thead>
+<tbody id="rows"></tbody></table>
+
+<div class="chips">
+  <span><b>动画</b> bit 逐位点亮 · MAC 阵列脉动 · 量化条形增长 · 数据流扫过 · 矩阵乘法逐格计算</span>
+  <span><b>配音</b> Edge 神经语音</span>
+  <span><b>配乐</b> 每集独立程序化合成技术 BGM（sub drone + off-beat bass + 琶音 + riser）</span>
+</div>
+
+<footer><a href="README.md">完整说明与重新生成命令</a></footer>
+</div>
+<script>
+const eps=[
+["L1-01","数字与精度：从 1 byte 到 INT8","2:00","b1"],
+["L1-02","矩阵与张量：神经网络的语言","1:34","b1"],
+["L1-03","卷积、池化与 BN","1:33","b1"],
+["L2-01","MAC 阵列与数据流","1:58","b2"],
+["L2-02","存储层次与数据搬运","1:52","b2"],
+["L2-03","量化到硬件：scale、零点与 requantization","1:36","b2"],
+["L2-04","RKNPU 架构实例","1:37","b2"],
+["L3-01","部署链路：ONNX 到 .rknn","1:50","b3"],
+["L3-02","RK3576 实践：第一个模型全链路","2:00","b3"],
+["L3-03","性能与精度：怎么把话说清楚","2:02","b3"]];
+document.getElementById("rows").innerHTML=eps.map((e,i)=>`<tr>
+<td class="num">${String(i+1).padStart(2,"0")}</td>
+<td><span class="badge ${e[3]}">${e[0]}</span> &nbsp; <a href="${encodeURIComponent(e[1])}/final.mp4">${e[1]}</a></td>
+<td class="num">${e[2]}</td></tr>`).join("");
+</script></body></html>
