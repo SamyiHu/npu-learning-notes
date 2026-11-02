@@ -20,3 +20,6 @@ video/**/*.mp4
 video/**/_tts_test/
 video/**/*.wav
 video/**/*.mp3
+
+# 单文件站点打包产物（node _build_singlefile.cjs 生成，可再生）
+dist/

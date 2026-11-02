@@ -17,6 +17,18 @@
 每课都完成三件事：手算一个小例子、做小白练习、记录一条实验结果。  
 互动演示可以打开 `index.html`，讲义源文件位于各阶段目录。
 
+### 在手机/远程/离线看这个站点
+
+`index.html` 依赖同目录的 `styles.css`、`lectures.js`、`lecture-viz.js`、`app.js`，单独发一个 html 打不开。要单文件带走时：
+
+```bash
+node _build_singlefile.cjs            # 生成 dist/npu-lab.html（约 640 KB，全部内联）
+```
+
+产物是一个自包含 HTML，双击即开、不需要联网、不需要其他文件，可直接发到手机或网盘。深链（`#/lectures/l05d`）和交互演示都照常工作。**改了讲义或前端后要重新跑一次**（`node _build_lectures.cjs` 先重建 lectures.js，再打包）。
+
+> 注：`dist/` 是生成产物，不入库。
+
 ## 范围与边界
 
 这套教程覆盖“从零基础到在 RK3576 上完成模型转换、部署、性能测量和基础验证”的完整链路，**不覆盖**：
